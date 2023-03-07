@@ -20,7 +20,7 @@ namespace TodoList.MVC
             services.AddDbContext<ApplicationDbContext>(opts =>
             {
                 opts.UseSqlServer(
-                    Configuration["ConnectionStrings:TodoListConnection"]);
+                    Configuration["ConnectionStrings:ApplicationDbContextConnection"]);
             });
 
             services.AddDefaultIdentity<ApplicationUser>(options 
