@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using TodoList.MVC.Areas.Identity.Data;
+using TodoList.Domain.DAL.Entities;
 
 namespace TodoList.MVC.Areas.Identity.Pages.Account.Manage
 {

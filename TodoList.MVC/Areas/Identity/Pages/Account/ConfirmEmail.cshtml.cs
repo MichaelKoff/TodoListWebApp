@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using TodoList.MVC.Areas.Identity.Data;
+using TodoList.Domain.DAL.Entities;
 
 namespace TodoList.MVC.Areas.Identity.Pages.Account
 {

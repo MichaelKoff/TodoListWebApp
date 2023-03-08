@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TodoList.MVC.Areas.Identity.Data;
-using TodoList.MVC.Data;
+using TodoList.Domain;
+using TodoList.Domain.DAL.Entities;
 
 namespace TodoList.MVC
 {
@@ -46,6 +46,7 @@ namespace TodoList.MVC
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
