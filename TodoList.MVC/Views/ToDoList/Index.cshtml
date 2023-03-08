@@ -1,0 +1,19 @@
+﻿@using TodoList.Domain.DAL.Entities;
+@model List<ToDoList>
+
+<h2>To-Do Lists</h2>
+
+<ul>
+    @foreach (var todoList in Model)
+    {
+        <li>
+            @todoList.Title
+            <ul>
+                @foreach (var task in todoList.ToDoListTasks)
+                {
+                    <li>@task.Title</li>
+                }
+            </ul>
+        </li>
+    }
+</ul>
