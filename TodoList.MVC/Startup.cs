@@ -1,6 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TodoList.Domain;
+using TodoList.Domain.BLL.Interfaces;
+using TodoList.Domain.BLL.Services;
 using TodoList.Domain.DAL.Entities;
+using TodoList.Domain.DAL.Interfaces;
+using TodoList.Domain.DAL.Repositories;
 
 namespace TodoList.MVC
 {
@@ -26,6 +30,11 @@ namespace TodoList.MVC
             services.AddDefaultIdentity<ApplicationUser>(options 
                 => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddScoped<IRepository<ToDoList>, ToDoListRepository>();
+            services.AddScoped<IRepository<ToDoListTask>, ToDoListTaskRepository>();
+            services.AddScoped<IToDoListService, ToDoListService>();
+            services.AddScoped<IToDoListTaskService, ToDoListTaskService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
