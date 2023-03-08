@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-namespace TodoList.MVC.Areas.Identity.Data;
+namespace TodoList.Domain.DAL.Entities;
 
 // Add profile data for application users by adding properties to the ApplicationUser class
 public class ApplicationUser : IdentityUser
 {
+    public ICollection<ToDoList> ToDoLists { get; set; }
 }
 

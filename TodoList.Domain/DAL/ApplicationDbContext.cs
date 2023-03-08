@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TodoList.MVC.Areas.Identity.Data;
+using TodoList.Domain.DAL.Entities;
 
-namespace TodoList.MVC.Data;
+namespace TodoList.Domain;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
+    public DbSet<ToDoList> ToDoLists { get; set; }
+
+    public DbSet<ToDoListTask> ToDoListTasks { get; set; }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
