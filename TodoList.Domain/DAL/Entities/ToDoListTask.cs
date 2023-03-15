@@ -12,11 +12,10 @@ namespace TodoList.Domain.DAL.Entities
         public int ToDoListId { get; set; }
         public ToDoList ToDoList { get; set; }
         public string Title { get; set; }
-        public string Description { get; set; }
-        public DateTime DueDate { get; set; }
-        public TodoStatus Status { get; set; }
-        public string Notes { get; set; }
-        public DateTime CreationDate { get; set; }
+        public string? Description { get; set; }
+        public DateTime? DueDate { get; set; }
+        public TodoStatus Status { get; set; } = TodoStatus.NotStarted;
+        public DateTime CreationDate { get; set; } = DateTime.Now;
         public DateTime? Reminder { get; set; }
     }
 }
