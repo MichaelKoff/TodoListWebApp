@@ -9,8 +9,8 @@ namespace TodoList.Domain.DAL.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
-        Task<T> GetByIdAsync(int id);
-        Task<List<T>> GetAllAsync();
+        Task<T> GetByIdAsync(int id, string userId);
+        Task<List<T>> GetAllAsync(string userId);
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
