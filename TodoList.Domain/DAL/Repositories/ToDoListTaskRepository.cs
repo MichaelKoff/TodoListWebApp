@@ -30,16 +30,15 @@ namespace TodoList.Domain.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<ToDoListTask>> GetAllAsync(string userId)
+        public async Task<List<ToDoListTask>> GetAllAsync()
         {
             return await _context.ToDoListTasks
-                .Where(t => t.ToDoList.ApplicationUserId == userId)
                 .ToListAsync();
         }
 
-        public async Task<ToDoListTask> GetByIdAsync(int id, string userId)
+        public async Task<ToDoListTask> GetByIdAsync(int id)
         {
-            return await _context.ToDoListTasks.FirstOrDefaultAsync(t => t.Id == id && t.ToDoList.ApplicationUserId == userId);
+            return await _context.ToDoListTasks.FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task UpdateAsync(ToDoListTask todoListTask)
