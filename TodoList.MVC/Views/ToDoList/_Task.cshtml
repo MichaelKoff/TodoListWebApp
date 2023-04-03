@@ -1,0 +1,63 @@
+﻿@using TodoList.Domain.DAL.Enums;
+@using TodoList.MVC.ViewModels;
+@model ToDoListTaskViewModel
+
+<li class="list-group-item todo-list-task d-flex justify-content-between align-items-center">
+  <div id="task-@Model.Id" class="task-item d-flex justify-content-between align-items-center w-100">
+    <div>
+      <span style="color: #f5f5f5;">@Model.Title</span>
+      <small class="text-muted d-block">Created at: @Model.CreationDate.ToString("g")</small>
+    </div>
+    <div class="d-flex align-items-center">
+      <button id="todo-modal-button-@Model.Id" type="button" class="btn btn-outline-secondary btn-sm" data-modal-id="@Model.Id" onclick="openModal(this)">
+        View/Edit
+      </button>
+      <form method="post" asp-controller="ToDoList" asp-action="DeleteTask">
+        <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmDeleteModal" data-id="@Model.Id" onclick="showTaskDeleteConfirmation(event)">
+          Delete
+        </button>
+      </form>
+    </div>
+  </div>
+  <div id="todo-modal-@Model.Id" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-modal-id="@Model.Id">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="todo-modal-label">Todo Details</h5>
+        </div>
+        <div class="modal-body">
+          <form id="todo-form-@Model.Id" method="post" asp-action="UpdateTask" asp-controller="ToDoList">
+            <div class="form-group">
+              <input name="Id" type="hidden" value="@Model.Id">
+              <label asp-for="Title">Title:</label>
+              <input asp-for="Title" class="form-control" value="@Model.Title">
+              <span asp-validation-for="Title" class="text-danger"></span>
+              <input asp-for="ToDoListId" type="hidden">
+            </div>
+            <div class="form-group">
+              <label asp-for="Description">Description:</label>
+              <textarea asp-for="Description" class="form-control">@Model.Description</textarea>
+              <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+              <label asp-for="DueDate">Due Date:</label>
+              <input asp-for="DueDate" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label asp-for="Status">Status:</label>
+              <select asp-for="Status" name="Status" class="form-control" asp-items="Html.GetEnumSelectList(typeof(TodoStatus))"></select>
+            </div>
+            <div class="form-group">
+              <label asp-for="Reminder">Reminder:</label>
+              <input asp-for="Reminder" class="form-control" />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cancelEdit('@Model.Id')">Close</button>
+          <button type="submit" form="todo-form-@Model.Id" class="btn btn-primary">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</li>
