@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.Extensions.ExpressionMapping;
+using Microsoft.EntityFrameworkCore;
 using TodoList.Domain;
 using TodoList.Domain.BLL.Interfaces;
 using TodoList.Domain.BLL.Services;
 using TodoList.Domain.DAL.Entities;
 using TodoList.Domain.DAL.Interfaces;
 using TodoList.Domain.DAL.Repositories;
+using TodoList.MVC.Mappers;
 
 namespace TodoList.MVC
 {
@@ -20,6 +23,9 @@ namespace TodoList.MVC
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddAntiforgery();
+            services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddDbContext<ApplicationDbContext>(opts =>
             {
