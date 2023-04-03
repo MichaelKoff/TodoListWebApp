@@ -24,4 +24,8 @@
     <ProjectReference Include="..\TodoList.Domain\TodoList.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\icons\" />
+  </ItemGroup>
+
 </Project>
