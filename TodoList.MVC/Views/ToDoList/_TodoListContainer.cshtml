@@ -1,0 +1,14 @@
+﻿@using TodoList.MVC.ViewModels;
+@model IEnumerable<ToDoListViewModel>
+
+<div id="todo-list-container" class="todo-list-container">
+  @await Html.PartialAsync("_Create", new ToDoListViewModel())
+  <div id="todo-list-items" class="todo-list-items">
+    <ul class="list-group">
+      @foreach (var todoList in Model)
+      {
+        @await Html.PartialAsync("_TodoList", todoList)
+      }
+    </ul>
+  </div>
+</div>
