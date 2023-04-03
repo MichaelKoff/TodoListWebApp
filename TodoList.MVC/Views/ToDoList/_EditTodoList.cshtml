@@ -1,0 +1,22 @@
+﻿@using TodoList.MVC.ViewModels;
+@model ToDoListViewModel
+
+<style>
+  .btn {
+      margin: 3.5px;
+      margin-left: 5px;
+  }
+
+  .form-control {
+      margin-top: 5px;
+      margin-left: 5px;
+  }
+</style>
+
+<form id="edit-todo-list-@Model.Id" method="post" asp-controller="ToDoList" asp-action="Update" class="form-inline">
+  <input type="hidden" name="Id" value="@Model.Id" />
+  <input asp-for="Title" type="text" class="form-control form-control-sm" value="@Model.Title" />
+  <span asp-validation-for="Title" class="text-danger"></span>
+  <button type="submit" form="edit-todo-list-@Model.Id" class="btn btn-primary btn-sm">Save</button>
+  <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEditTitle('@Model.Id')">Cancel</button>
+</form>
