@@ -40,7 +40,7 @@ body {
     background: #23272C;
 }
 
-h3 {
+h2, h3 {
     color: #4fc9b0;
 }
 
@@ -185,6 +185,35 @@ h3 {
         vertical-align: middle;
     }
 
+.toggle-sidebar {
+    position: absolute;
+    left: 0;
+    top: 56px;
+    padding: 5px 10px;
+    background-color: #4fc9b0;
+    font-size: 16px;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+}
+
+.offcanvas-start {
+    border-right: 1px solid #3a4147;
+}
+
+#todoListOffcanvas.offcanvas-start .offcanvas-header {
+    padding-top: 1rem !important;
+    padding-bottom: 0rem !important;
+    padding-left: 0rem !important;
+    padding-right: 1rem !important;
+}
+
+#todoListOffcanvas.offcanvas-start .offcanvas-body {
+    padding-top: 1rem !important;
+    padding-bottom: 0rem !important;
+    padding-left: 0rem !important;
+    padding-right: 0rem !important;
+}
 
 .nav-tabs{
     border-bottom:3px solid #4fc9b0;

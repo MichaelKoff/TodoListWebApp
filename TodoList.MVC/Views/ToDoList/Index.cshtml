@@ -5,23 +5,36 @@
   var renderError = (ViewData["RenderError"] as bool?) ?? false;
 }
 
-<div class="container-fluid">
+<div class="container-fluid" style="max-width: 90%;">
   <div class="row">
-    <div class="col-md-4">
+    <div class="d-md-none">
+      <button class="toggle-sidebar" type="button" data-bs-toggle="offcanvas" data-bs-target="#todoListOffcanvas" aria-controls="todoListOffcanvas">&#9776;</button>
+    </div>
+
+    <div class="offcanvas offcanvas-start d-md-none custom-bg" tabindex="-1" id="todoListOffcanvas">
+      <div class="offcanvas-header">
+        <h2 class="offcanvas-title">TODO LISTS</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        @await Html.PartialAsync("_TodoListContainer", Model.TodoLists)
+      </div>
+    </div>
+
+    <div class="col-md-4 d-none d-md-block">
       <h3>TODO LISTS</h3>
       @await Html.PartialAsync("_TodoListContainer", Model.TodoLists)
     </div>
-    <div class="col-md-8">
+
+    <div class="col-12 col-md-8">
       <div id="task-list-container" class="task-list-container">
         @if (renderError)
         {
           @await Html.PartialAsync("_TodoListTasksError")
-
         }
         else
         {
           @await Html.PartialAsync("_TodoListTasks", Model.SelectedTodoList)
-
         }
       </div>
     </div>
