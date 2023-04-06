@@ -11,19 +11,17 @@
       <button class="toggle-sidebar" type="button" data-bs-toggle="offcanvas" data-bs-target="#todoListOffcanvas" aria-controls="todoListOffcanvas">&#9776;</button>
     </div>
 
-    <div class="offcanvas offcanvas-start d-md-none custom-bg" tabindex="-1" id="todoListOffcanvas">
+  <div class="offcanvas-md offcanvas-start custom-bg col-md-4" tabindex="-1" id="todoListOffcanvas">
       <div class="offcanvas-header">
         <h2 class="offcanvas-title">TODO LISTS</h2>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#todoListOffcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        @await Html.PartialAsync("_TodoListContainer", Model.TodoLists)
+        <div class="w-100">
+          <h3 class="d-none d-md-block">TODO LISTS</h3>
+          @await Html.PartialAsync("_TodoListContainer", Model.TodoLists)
+        </div>
       </div>
-    </div>
-
-    <div class="col-md-4 d-none d-md-block">
-      <h3>TODO LISTS</h3>
-      @await Html.PartialAsync("_TodoListContainer", Model.TodoLists)
     </div>
 
     <div class="col-12 col-md-8">
