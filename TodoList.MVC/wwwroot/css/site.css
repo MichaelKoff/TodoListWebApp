@@ -36,8 +36,29 @@ html {
     min-height: 100%;
 }
 
+.navbar {
+    min-height: 56px;
+    max-height: 56px;
+    background: #3a4147;
+    z-index: 1;
+}
+
+.custom-bg {
+    background-color: #23272c;
+}
+
+@media (max-width: 575.98px) {
+    .navbar {
+        max-height: none;
+    }
+}
+
 body {
     background: #23272C;
+}
+
+main {
+    padding-top: 66px;
 }
 
 h2, h3 {
