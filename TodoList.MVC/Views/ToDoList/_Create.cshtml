@@ -5,7 +5,7 @@
   <div class="hstack gap-3 p-2 mt-1 mb-3">
     <div class="vstack gap-1">
       <input id="create-input" asp-for="Title" type="text" class="form-control" placeholder="Create a new Todo List" />
-      <span asp-validation-for="Title" class="text-danger fs-6" style="margin-left:5px;"></span>
+      <span asp-validation-for="Title" class="text-danger validation-message"></span>
     </div>
     <button id="create-button" type="submit" form="create-todo-list" class="btn btn-primary">Add</button>
   </div>

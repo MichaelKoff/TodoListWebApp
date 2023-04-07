@@ -1,47 +1,19 @@
 ﻿@using TodoList.MVC.ViewModels;
 @model ToDoListTaskViewModel
 
-<div class="col-md-6">
-  <form id="create-task" class="form-horizontal" style="padding-top: 7px; padding-bottom: 7px;" method="post" asp-action="CreateTask" asp-controller="ToDoList">
-    <div class="form-group row m-2">
-      <div class="col-sm-10 p-1">
-        <input asp-for="ToDoListId" type="hidden" value="@Model.ToDoListId" />
-        <input id="create-task-input" asp-for="Title" type="text" class="form-control" placeholder="Create a new Task" />
-        <span asp-validation-for="Title" class="text-danger"></span>
+<div class="col-sm-6">
+  <form id="create-task" method="post" asp-action="CreateTask" asp-controller="ToDoList">
+    <div class="hstack gap-3" style="margin:0.75rem!important;">
+      <div class="vstack gap-1">
+        <input asp-for="ToDoListId" type="hidden" value="@Model.ToDoListId"/>
+        <input id="create-task-input" asp-for="Title" type="text" class="form-control" placeholder="Create a new Task"/>
+        <span asp-validation-for="Title" class="text-danger validation-message"></span>
       </div>
       <script>
         $("form#create-task").removeData("validator").removeData("unobtrusiveValidation");
         $.validator.unobtrusive.parse("form#create-task");
       </script>
-      <div class="col-sm-2 p-1">
-        <button id="create-task-button" type="submit" class="btn btn-primary btn-block">Add</button>
-      </div>
+      <button id="create-task-button" type="submit" class="btn btn-primary">Add</button>
     </div>
   </form>
 </div>
-
-<script>
-  $(function () {
-      $(document).off("submit", "#create-task").on("submit", "#create-task", function (e) {
-          e.preventDefault();
-          var form = $(this);
-          $.ajax({
-              url: form.attr("action"),
-              method: "POST",
-              data: form.serialize(),
-              success: function (data) {
-                  var taskListHtml = $(data).find("#task-list").html();
-                  var formHtml = $(data).find("#create-task").html();
-                  $("#task-list-container #task-list").html(taskListHtml);
-                  $("#task-list-container #create-task").html(formHtml);
-
-                  form.find('input[name="Title"]').val('');
-                  form.find('input[name="Title"]').focus();
-              },
-              error: function () {
-                  console.log("Error creating todo list.");
-              }
-          });
-      });
-  });
-</script>
