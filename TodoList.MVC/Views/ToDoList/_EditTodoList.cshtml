@@ -1,22 +1,25 @@
 ﻿@using TodoList.MVC.ViewModels;
 @model ToDoListViewModel
 
-<style>
-  .btn {
-      margin: 3.5px;
-      margin-left: 5px;
-  }
-
-  .form-control {
-      margin-top: 5px;
-      margin-left: 5px;
-  }
-</style>
-
-<form id="edit-todo-list-@Model.Id" method="post" asp-controller="ToDoList" asp-action="Update" class="form-inline">
-  <input type="hidden" name="Id" value="@Model.Id" />
-  <input asp-for="Title" type="text" class="form-control form-control-sm" value="@Model.Title" />
-  <span asp-validation-for="Title" class="text-danger"></span>
-  <button type="submit" form="edit-todo-list-@Model.Id" class="btn btn-primary btn-sm">Save</button>
-  <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEditTitle('@Model.Id')">Cancel</button>
+<form id="edit-todo-list-@Model.Id" method="post" asp-controller="ToDoList" asp-action="Update">
+  <div class="hstack gap-5">
+    <div class="vstack me-auto">
+      <input type="hidden" name="Id" value="@Model.Id" />
+      <input id="edit-title-input" asp-for="Title" type="text" class="form-control" value="@Model.Title" />
+      <span asp-validation-for="Title" class="text-danger fs-6" style="margin-left:5px;"></span>
+    </div>
+    <div class="hstack">
+      <button type="submit" form="edit-todo-list-@Model.Id" class="btn btn-outline-secondary btn-sm">
+        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6,12 l4,4 l10,-10" />
+        </svg>
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cancelEditTitle('@Model.Id')">
+        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6,6 L18,18" />
+          <path d="M18,6 L6,18" />
+        </svg>
+      </button>
+    </div>
+  </div>
 </form>
