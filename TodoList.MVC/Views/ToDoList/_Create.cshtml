@@ -1,7 +1,7 @@
 ﻿@using TodoList.MVC.ViewModels;
 @model ToDoListViewModel
 
-<form id="create-todo-list" class="form-horizontal" method="post" asp-action="Create" asp-controller="ToDoList">
+<form id="create-todo-list" method="post" asp-action="Create" asp-controller="ToDoList">
   <div class="hstack gap-3 p-2 mt-1 mb-3">
     <div class="vstack gap-1">
       <input id="create-input" asp-for="Title" type="text" class="form-control" placeholder="Create a new Todo List" />
