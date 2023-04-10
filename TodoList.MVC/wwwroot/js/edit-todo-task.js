@@ -1,0 +1,33 @@
+﻿function openModal(button) {
+    const modalId = $(button).data('modal-id');
+    $(`#todo-modal-${modalId}`).modal('show');
+    $(`#todo-modal-${modalId} form`).removeData('validator').removeData('unobtrusiveValidation');
+    $.validator.unobtrusive.parse(`#todo-modal-${modalId} form`);
+
+    $(document).off("submit", `#todo-modal-${modalId} form`).on("submit", `#todo-modal-${modalId} form`, function (e) {
+        e.preventDefault();
+        let form = $(this);
+        let formData = form.serialize();
+        form.trigger("reset");
+        console.log(formData);
+        $.ajax({
+            url: form.attr("action"),
+            method: "POST",
+            data: formData,
+            success: function (data) {
+                $(`#todo-modal-${modalId}`).modal('hide');
+                const taskListHtml = $(data).find("#task-list").html();
+                $("#task-list-container #task-list").html(taskListHtml);
+            },
+            error: function () {
+                window.location.href = "/Home/Error";
+                console.log("Error updating task.");
+            }
+        });
+    });
+}
+
+function cancelEdit(id) {
+    $(`#todo-modal-${id}`).find('form')[0].reset();
+    $(`#todo-modal-${id}`).modal('hide');
+}
