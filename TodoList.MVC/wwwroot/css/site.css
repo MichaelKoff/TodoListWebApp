@@ -331,6 +331,7 @@ h2, h3 {
 .todo-list-task {
     border-radius: 30px;
     background: #3a4147;
+    padding-left:8px;
 }
 
     .todo-list-task:first-child {
@@ -351,18 +352,27 @@ h2, h3 {
     }
 
 
+.task-status-btn {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
 .task-title{
     color:#f5f5f5;
 }
 
 .btn-custom-transparent {
+    font-size:16px;
     text-align:start;
     width:100%;
     background-color: transparent;
     border: none;
     box-shadow: none;
     color: inherit;
-    padding: 0;
+    padding: 0px 0px 0px 0px;
 }
 
     .btn-custom-transparent:hover,
