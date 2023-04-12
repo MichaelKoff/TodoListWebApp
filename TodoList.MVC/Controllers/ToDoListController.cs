@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using TodoList.Domain.BLL.Interfaces;
 using TodoList.Domain.DAL.Entities;
+using TodoList.Domain.DAL.Enums;
 using TodoList.MVC.Models;
 using TodoList.MVC.ViewModels;
 
@@ -181,13 +182,28 @@ namespace TodoList.MVC.Controllers
 
             var taskToUpdate = _mapper.Map<ToDoListTask>(task);
             var todoList = await _todoListService.GetByIdAsync(taskToUpdate.ToDoListId, userId);
-            taskToUpdate.ToDoList= todoList;
+            taskToUpdate.ToDoList = todoList;
 
             await _todoListTaskService.UpdateAsync(taskToUpdate);
 
             ModelState.Clear();
             return await TodoListTasks(task.ToDoListId);
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateTaskStatus(int id, TodoStatus newStatus)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user.Id;
+
+            var taskToUpdate = await _todoListTaskService.GetByIdAsync(id, userId);
+            taskToUpdate.Status = newStatus;
+
+            await _todoListTaskService.UpdateAsync(taskToUpdate);
+
+            ModelState.Clear();
+            return await TodoListTasks(taskToUpdate.ToDoListId);
         }
 
         private async Task<IActionResult> GetTodoListContainerAsync(string userId)
