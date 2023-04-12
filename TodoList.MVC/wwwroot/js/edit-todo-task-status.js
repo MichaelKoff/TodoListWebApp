@@ -1,22 +1,15 @@
-﻿function openModal(button) {
-    const modalId = $(button).data('modal-id');
-    $(`#todo-modal-${modalId}`).modal('show');
-    $(`#todo-modal-${modalId} form`).removeData('validator').removeData('unobtrusiveValidation');
-    $.validator.unobtrusive.parse(`#todo-modal-${modalId} form`);
-
-    $(document).off("submit", `#todo-modal-${modalId} form`).on("submit", `#todo-modal-${modalId} form`, function (e) {
+﻿function editTodoStatus(id) {
+    $(document).off("submit", `#update-task-status-${id}`).on("submit", `#update-task-status-${id}`, function (e) {
         e.preventDefault();
         let form = $(this);
-        let formData = form.serialize();
 
         $.ajax({
             url: form.attr("action"),
             method: "POST",
-            data: formData,
+            data: form.serialize(),
             success: function (data) {
                 updateCurrentTab();
 
-                $(`#todo-modal-${modalId}`).modal('hide');
                 const taskListHtml = $(data).find("#task-list").html();
                 $("#task-list-container #task-list").html(taskListHtml);
 
@@ -29,9 +22,4 @@
             }
         });
     });
-}
-
-function cancelEdit(id) {
-    $(`#todo-modal-${id}`).find('form')[0].reset();
-    $(`#todo-modal-${id}`).modal('hide');
 }

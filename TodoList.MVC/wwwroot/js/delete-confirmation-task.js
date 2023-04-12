@@ -32,8 +32,13 @@ function onTaskDeleteButtonClick() {
             'RequestVerificationToken': token
         },
         success: function (result) {
+            updateCurrentTab();
+
             const taskListHtml = $(result).find("#task-list").html();
             $("#task-list-container #task-list").html(taskListHtml);
+            
+            let activeButton = document.getElementById(currentTab);
+            clickHandle({ currentTarget: activeButton }, currentTab.replace('-button', ''));
 
             $('#confirmDeleteModal').modal('hide');
         },

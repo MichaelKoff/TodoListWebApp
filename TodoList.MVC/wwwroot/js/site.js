@@ -1,4 +1,11 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿let currentTab = 'not-started-button';
 
-// Write your JavaScript code.
+function updateCurrentTab() {
+    let tablinks = document.getElementsByClassName("tablinks");
+    for (const element of tablinks) {
+        if (element.className.includes("active")) {
+            currentTab = element.id;
+            break;
+        }
+    }
+}

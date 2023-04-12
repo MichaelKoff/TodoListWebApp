@@ -7,10 +7,16 @@
             method: "POST",
             data: form.serialize(),
             success: function (data) {
+                updateCurrentTab();
+
                 let taskListHtml = $(data).find("#task-list").html();
                 let formHtml = $(data).find("#create-task").html();
+
                 $("#task-list-container #task-list").html(taskListHtml);
                 $("#task-list-container #create-task").html(formHtml);
+
+                let activeButton = document.getElementById(currentTab);
+                clickHandle({ currentTarget: activeButton }, currentTab.replace('-button', ''));
 
                 form.find('input[name="Title"]').val('');
                 form.find('input[name="Title"]').focus();
