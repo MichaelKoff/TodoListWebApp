@@ -20,13 +20,13 @@
       <div id="task-list" class="task-list-containter">
         <ul class="nav nav-tabs" id="task-status-tabs" role="tablist">
           <li class="nav-item">
-            <button id="not-started-button" class="tablinks active" onclick="clickHandle(event, 'not-started')">Not started <span class="badge custom-badge">@notStartedCount</span></button>
+            <button id="not-started-button" class="tablinks active" onclick="selectTab(event, 'not-started')">Not started <span class="badge custom-badge">@notStartedCount</span></button>
           </li>
           <li class="nav-item">
-            <button id="in-progress-button" class="tablinks" onclick="clickHandle(event, 'in-progress')">In progress <span class="badge custom-badge">@inProgressCount</span></button>
+            <button id="in-progress-button" class="tablinks" onclick="selectTab(event, 'in-progress')">In progress <span class="badge custom-badge">@inProgressCount</span></button>
           </li>
           <li class="nav-item">
-            <button id="completed-button" class="tablinks" onclick="clickHandle(event, 'completed')">Completed <span class="badge custom-badge">@completedCount</span></button>
+            <button id="completed-button" class="tablinks" onclick="selectTab(event, 'completed')">Completed <span class="badge custom-badge">@completedCount</span></button>
           </li>
         </ul>
         <div class="tab-content" id="task-status-tabs-content">
@@ -59,24 +59,3 @@
     </div>
   }
 }
-<script>
-  function clickHandle(evt, status) {
-      let i, tabcontent, tablinks;
-
-      // This is to clear the previous clicked content.
-      tabcontent = document.getElementsByClassName("tabcontent");
-      for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-      }
-
-      // Set the tab to be active.
-      tablinks = document.getElementsByClassName("tablinks");
-      for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-      }
-
-      // Display the clicked tab and set it to active.
-      document.getElementById(status).style.display = "block";
-      evt.currentTarget.className += " active";
-  }
-</script>

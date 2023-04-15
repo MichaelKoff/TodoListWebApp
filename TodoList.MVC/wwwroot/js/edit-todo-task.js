@@ -21,7 +21,7 @@
                 $("#task-list-container #task-list").html(taskListHtml);
 
                 let activeButton = document.getElementById(currentTab);
-                clickHandle({ currentTarget: activeButton }, currentTab.replace('-button', ''));
+                selectTab({ currentTarget: activeButton }, currentTab.replace('-button', ''));
             },
             error: function () {
                 window.location.href = "/Home/Error";

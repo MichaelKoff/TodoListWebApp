@@ -16,7 +16,7 @@
                 $("#task-list-container #create-task").html(formHtml);
 
                 let activeButton = document.getElementById(currentTab);
-                clickHandle({ currentTarget: activeButton }, currentTab.replace('-button', ''));
+                selectTab({ currentTarget: activeButton }, currentTab.replace('-button', ''));
 
                 form.find('input[name="Title"]').val('');
                 form.find('input[name="Title"]').focus();
