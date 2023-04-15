@@ -5,6 +5,9 @@
   @await Html.PartialAsync("_Create", new ToDoListViewModel())
   <div id="todo-list-items" class="todo-list-items">
     <ul class="list-group">
+      <li class="list-group-item todo-list d-flex justify-content-between align-items-center">
+        <a id="due-today-link" class="todo-list-link list-due-today" href="#" data-list-id="TasksDueToday">My Day</a>
+      </li>
       @foreach (var todoList in Model)
       {
         @await Html.PartialAsync("_TodoList", todoList)

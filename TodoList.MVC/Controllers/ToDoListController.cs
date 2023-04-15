@@ -124,20 +124,66 @@ namespace TodoList.MVC.Controllers
             try
             {
                 var user = await _userManager.GetUserAsync(User);
-                var userId = user.Id;
 
-                var selectedTodoList = await _todoListService.GetByIdAsync(id, userId);
+                var selectedTodoList = await _todoListService.GetByIdAsync(id, user.Id);
+                var todoLists = await _todoListService.GetAllAsync(user.Id);
 
-                if (selectedTodoList == null)
-                {
-                    ViewData["RenderError"] = true;
-                }
-
-                var todoLists = await _todoListService.GetAllAsync(userId);
                 var model = new CombinedTodoListViewModel
                 {
                     TodoLists = _mapper.Map<List<ToDoListViewModel>>(todoLists),
-                    SelectedTodoList = _mapper.Map<ToDoListViewModel>(selectedTodoList)
+                    SelectedTodoList = _mapper.Map<ToDoListViewModel>(selectedTodoList),
+                    IsListNotFound = selectedTodoList == null
+                };
+
+                return View("Index", model);
+            }
+            catch (Exception)
+            {
+                return View("Error");
+            }
+        }
+
+        [HttpPost("[controller]/TasksDueToday")]
+        public async Task<IActionResult> TasksDueToday()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                var todoListViewModel = new ToDoListViewModel();
+                var tasks = await _todoListTaskService.GetAllAsync(user.Id);
+                var tasksDueToday = tasks.Where(t => t.DueDate.HasValue && t.DueDate.Value.Date == DateTime.Today.Date).ToList();
+
+                todoListViewModel.ToDoListTasks = _mapper.Map<List<ToDoListTaskViewModel>>(tasksDueToday);
+
+                return PartialView("_TasksDueToday", todoListViewModel);
+            }
+            catch (Exception)
+            {
+                return View("Error");
+            }
+        }
+
+        [HttpGet("[controller]/TasksDueToday")]
+        public async Task<IActionResult> GetTasksDueToday()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                var tasks = await _todoListTaskService.GetAllAsync(user.Id);
+                var tasksDueToday = tasks.Where(t => t.DueDate.HasValue && t.DueDate.Value.Date == DateTime.Today.Date).ToList();
+
+                var todoListViewModel = new ToDoListViewModel();
+                todoListViewModel.ToDoListTasks = _mapper.Map<List<ToDoListTaskViewModel>>(tasksDueToday);
+
+                var todoLists = await _todoListService.GetAllAsync(user.Id);
+
+                var model = new CombinedTodoListViewModel()
+                {
+                    TodoLists = _mapper.Map<List<ToDoListViewModel>>(todoLists),
+                    SelectedTodoList = todoListViewModel,
+                    IsDueToday = true
                 };
 
                 return View("Index", model);
@@ -163,14 +209,20 @@ namespace TodoList.MVC.Controllers
         public async Task<IActionResult> DeleteTask(int id)
         {
             var user = await _userManager.GetUserAsync(User);
-            var userId = user.Id;
 
-            var task = await _todoListTaskService.GetByIdAsync(id, userId);
+            var task = await _todoListTaskService.GetByIdAsync(id, user.Id);
             int todoListId = task.ToDoListId;
 
-            await _todoListTaskService.DeleteAsync(id, userId);
+            await _todoListTaskService.DeleteAsync(id, user.Id);
 
-            return await TodoListTasks(todoListId);
+            if (Request.Headers["Referer"].ToString().Contains("TasksDueToday"))
+            {
+                return await TasksDueToday();
+            }
+            else
+            {
+                return await TodoListTasks(todoListId);
+            }
         }
 
         [HttpPost]
@@ -178,16 +230,23 @@ namespace TodoList.MVC.Controllers
         public async Task<IActionResult> UpdateTask(ToDoListTaskViewModel task)
         {
             var user = await _userManager.GetUserAsync(User);
-            var userId = user.Id;
 
             var taskToUpdate = _mapper.Map<ToDoListTask>(task);
-            var todoList = await _todoListService.GetByIdAsync(taskToUpdate.ToDoListId, userId);
+            var todoList = await _todoListService.GetByIdAsync(taskToUpdate.ToDoListId, user.Id);
             taskToUpdate.ToDoList = todoList;
 
             await _todoListTaskService.UpdateAsync(taskToUpdate);
 
             ModelState.Clear();
-            return await TodoListTasks(task.ToDoListId);
+
+            if (Request.Headers["Referer"].ToString().Contains("TasksDueToday"))
+            {
+                return await TasksDueToday();
+            }
+            else
+            {
+                return await TodoListTasks(taskToUpdate.ToDoListId);
+            }
         }
 
         [HttpPost]
@@ -195,15 +254,22 @@ namespace TodoList.MVC.Controllers
         public async Task<IActionResult> UpdateTaskStatus(int id, TodoStatus newStatus)
         {
             var user = await _userManager.GetUserAsync(User);
-            var userId = user.Id;
 
-            var taskToUpdate = await _todoListTaskService.GetByIdAsync(id, userId);
+            var taskToUpdate = await _todoListTaskService.GetByIdAsync(id, user.Id);
             taskToUpdate.Status = newStatus;
 
             await _todoListTaskService.UpdateAsync(taskToUpdate);
 
             ModelState.Clear();
-            return await TodoListTasks(taskToUpdate.ToDoListId);
+
+            if (Request.Headers["Referer"].ToString().Contains("TasksDueToday"))
+            {
+                return await TasksDueToday();
+            }
+            else
+            {
+                return await TodoListTasks(taskToUpdate.ToDoListId);
+            }
         }
 
         private async Task<IActionResult> GetTodoListContainerAsync(string userId)

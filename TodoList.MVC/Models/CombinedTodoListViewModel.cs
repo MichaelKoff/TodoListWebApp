@@ -7,5 +7,7 @@ namespace TodoList.MVC.Models
     {
         public IEnumerable<ToDoListViewModel> TodoLists { get; set; }
         public ToDoListViewModel SelectedTodoList { get; set; }
+        public bool IsDueToday { get; set; } = false;
+        public bool IsListNotFound { get; set; } = false;
     }
 }

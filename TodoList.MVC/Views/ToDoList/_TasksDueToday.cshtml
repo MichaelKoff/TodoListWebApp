@@ -1,0 +1,92 @@
+﻿@using TodoList.Domain.DAL.Enums
+@using TodoList.MVC.ViewModels;
+@model ToDoListViewModel
+@{
+  var notStartedCount = Model?.ToDoListTasks.Where(t => t.Status == TodoStatus.NotStarted).Count();
+  var inProgressCount = Model?.ToDoListTasks.Where(t => t.Status == TodoStatus.InProgress).Count();
+  var completedCount = Model?.ToDoListTasks.Where(t => t.Status == TodoStatus.Completed).Count();
+}
+
+@{
+  if (Model == null)
+  {
+    <h3>Select a list</h3>
+  }
+  else
+  {
+    <h3>Tasks due Today</h3>
+    <div class="todo-list-task-container">
+      <div class="col-sm-6">
+        <form id="create-task" method="post" asp-action="CreateTask" asp-controller="ToDoList">
+          <div class="hstack gap-3" style="margin:0.75rem!important;">
+            <div class="vstack gap-1">
+              <input id="create-task-input" asp-for="Title" type="text" class="form-control" placeholder="*Disabled* Select a todo list" disabled/>
+              <span asp-validation-for="Title" class="text-danger validation-message"></span>
+            </div>
+            <button id="create-task-button" type="submit" class="btn btn-primary" disabled>Add</button>
+          </div>
+        </form>
+      </div>
+      <div id="task-list" class="task-list-containter">
+        <ul class="nav nav-tabs" id="task-status-tabs" role="tablist">
+          <li class="nav-item">
+            <button id="not-started-button" class="tablinks active" onclick="clickHandle(event, 'not-started')">Not started <span class="badge custom-badge">@notStartedCount</span></button>
+          </li>
+          <li class="nav-item">
+            <button id="in-progress-button" class="tablinks" onclick="clickHandle(event, 'in-progress')">In progress <span class="badge custom-badge">@inProgressCount</span></button>
+          </li>
+          <li class="nav-item">
+            <button id="completed-button" class="tablinks" onclick="clickHandle(event, 'completed')">Completed <span class="badge custom-badge">@completedCount</span></button>
+          </li>
+        </ul>
+        <div class="tab-content" id="task-status-tabs-content">
+          <div class="tabcontent" id="not-started" role="tabpanel" aria-labelledby="not-started-tab" style="display:block;">
+            <ul class="list-group">
+              @foreach (var task in Model.ToDoListTasks.Where(t => t.Status == TodoStatus.NotStarted))
+              {
+                @await Html.PartialAsync("_Task", task)
+              }
+            </ul>
+          </div>
+          <div class="tabcontent" id="in-progress" role="tabpanel" aria-labelledby="in-progress-tab" style="display:none;">
+            <ul class="list-group">
+              @foreach (var task in Model.ToDoListTasks.Where(t => t.Status == TodoStatus.InProgress))
+              {
+                @await Html.PartialAsync("_Task", task)
+              }
+            </ul>
+          </div>
+          <div class="tabcontent" id="completed" role="tabpanel" aria-labelledby="completed-tab" style="display:none;">
+            <ul class="list-group">
+              @foreach (var task in Model.ToDoListTasks.Where(t => t.Status == TodoStatus.Completed))
+              {
+                @await Html.PartialAsync("_Task", task)
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}
+<script>
+  function clickHandle(evt, status) {
+      let i, tabcontent, tablinks;
+
+      // This is to clear the previous clicked content.
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+      }
+
+      // Set the tab to be active.
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+
+      // Display the clicked tab and set it to active.
+      document.getElementById(status).style.display = "block";
+      evt.currentTarget.className += " active";
+  }
+</script>

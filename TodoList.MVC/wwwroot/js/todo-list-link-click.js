@@ -3,46 +3,43 @@
     const url = window.location.href;
     const listId = getListIdFromUrl(url);
     if (listId) {
-        $(`.todo-list-link[data-list-id="${listId}"]`).closest(".list-group-item").addClass("active");
-        $(`.todo-list-link[data-list-id="${listId}"]`).addClass("active");
-        loadTasksForList(listId);
+        if (listId === "TasksDueToday") {
+            activateTodoListLink("TasksDueToday");
+        } else {
+            activateTodoListLink(listId);
+        }
     }
 
     // Handle clicks on todo list links
     $(document).on("click", ".todo-list-link", function (e) {
         e.preventDefault();
         const listId = $(this).data("list-id");
-
-        $(".list-group-item").removeClass("active");
-        $(".todo-list-link").removeClass("active");
-        $(this).closest(".list-group-item").addClass("active");
-        $(this).closest(".todo-list-link").addClass("active");
-        loadTasksForList(listId);
+        activateTodoListLink(listId);
+        loadTasks(listId);
     });
 
     // Handle back button clicks
     $(window).on("popstate", function (e) {
-        const url = window.location.href;
-        const listId = getListIdFromUrl(url);
-        if (listId) {
-            $(".list-group-item").removeClass("active");
-            $(".todo-list-link").removeClass("active");
-            $(`.todo-list-link[data-list-id="${listId}"]`).closest(".list-group-item").addClass("active");
-            $(`.todo-list-link[data-list-id="${listId}"]`).addClass("active");
-            loadTasksForList(listId, false); // pass false to not push state again
+        const state = e.originalEvent.state;
+        if (state) {
+            const listId = state.listId || "TasksDueToday";
+            activateTodoListLink(listId);
+            loadTasks(listId, false);
         } else {
-            // If no listId in URL, load the initial content
-            const url = window.location.href;
-            const listId = getListIdFromUrl(url);
-            if (listId) {
-                loadTasksForList(listId);
-            }
+            activateTodoListLink("TasksDueToday");
+            loadTasks("TasksDueToday", false);
         }
     });
 
-    // Helper function to load tasks for a given list ID
-    function loadTasksForList(listId, pushState = true) {
-        const url = '/ToDoList/todolist/' + listId;
+    // Helper function to load tasks for a given list ID or "TasksDueToday" filter
+    function loadTasks(listId, pushState = true) {
+        let url;
+        if (listId === "TasksDueToday") {
+            url = "/ToDoList/TasksDueToday/";
+        } else {
+            url = `/ToDoList/todolist/${listId}`;
+        }
+
         $.ajax({
             url: url,
             method: "POST",
@@ -55,10 +52,23 @@
                 }
             },
             error: function (x) {
-                console.log(x)
+                console.log(x);
                 console.log("Error loading tasks.");
             }
         });
+    }
+
+    // Helper function to activate the selected todo list link
+    function activateTodoListLink(listId) {
+        $(".list-group-item").removeClass("active");
+        $(".todo-list-link").removeClass("active");
+        if (listId === "TasksDueToday") {
+            $("#due-today-link").closest(".list-group-item").addClass("active");
+            $("#due-today-link").addClass("active");
+        } else {
+            $(`.todo-list-link[data-list-id="${listId}"]`).closest(".list-group-item").addClass("active");
+            $(`.todo-list-link[data-list-id="${listId}"]`).addClass("active");
+        }
     }
 
     // Helper function to extract list ID from URL
@@ -67,6 +77,10 @@
         if (match && match.length > 1) {
             return match[1];
         }
+        else if (url.endsWith("/ToDoList/TasksDueToday/")) {
+            return "TasksDueToday";
+        }
+
         return null;
     }
 });
