@@ -69,6 +69,17 @@ namespace TodoList.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Duplicate(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            await _todoListService.DuplicateAsync(id, user.Id);
+
+            return await GetTodoListContainerAsync(user.Id);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var user = await _userManager.GetUserAsync(User);

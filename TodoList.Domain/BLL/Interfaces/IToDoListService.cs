@@ -12,6 +12,7 @@ namespace TodoList.Domain.BLL.Interfaces
         Task<ToDoList> GetByIdAsync(int id, string userId);
         Task<List<ToDoList>> GetAllAsync(string userId);
         Task AddAsync(ToDoList todoList);
+        Task DuplicateAsync(int id, string userId);
         Task UpdateAsync(ToDoList todoList);
         Task DeleteAsync(int id, string userId);
     }

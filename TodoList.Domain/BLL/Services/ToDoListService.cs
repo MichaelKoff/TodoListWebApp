@@ -73,6 +73,41 @@ namespace TodoList.Domain.BLL.Services
             await _repository.DeleteAsync(todoList);
         }
 
+        public async Task DuplicateAsync(int id, string userId)
+        {
+            var existingTodoList = await GetByIdAsync(id, userId);
+
+            if (existingTodoList == null)
+            {
+                throw new ArgumentNullException("Todo list with passed id does not exist");
+            }
+
+            var duplicatedTodoList = new ToDoList()
+            {
+                Title = existingTodoList.Title,
+                ApplicationUser = existingTodoList.ApplicationUser,
+                ApplicationUserId = existingTodoList.ApplicationUserId,
+                ToDoListTasks = new List<ToDoListTask>()
+            };
+
+            foreach (var task in existingTodoList.ToDoListTasks)
+            {
+                var newTask = new ToDoListTask
+                {
+                    Title = task.Title,
+                    Description = task.Description,
+                    DueDate = task.DueDate,
+                    Status = task.Status,
+                    Reminder = task.Reminder,
+                    ToDoList = duplicatedTodoList,
+                };
+
+                duplicatedTodoList.ToDoListTasks.Add(newTask);
+            }
+
+            await AddAsync(duplicatedTodoList);
+        }
+
         public async Task<List<ToDoList>> GetAllAsync(string userId)
         {
             return await _repository.GetAllAsync(userId);
