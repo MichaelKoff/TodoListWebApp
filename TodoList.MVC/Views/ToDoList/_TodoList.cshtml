@@ -3,11 +3,11 @@
 
 <li class="list-group-item todo-list d-flex justify-content-between align-items-center">
   <a class="todo-list-link" href="#" data-list-id="@Model.Id">@Model.Title</a>
-  <button type="button" class="btn btn-outline-secondary btn-sm" title="Edit" data-id="@Model.Id" onclick="editTitle('@Model.Id')">
+  <button type="button" class="btn btn-custom-margin btn-outline-secondary btn-sm" title="Edit" data-id="@Model.Id" onclick="editTitle('@Model.Id')">
     <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
   </button>
   <form id="duplicate-todo-list-@Model.Id" method="post" enctype="multipart/form-data" asp-controller="ToDoList" asp-action="Duplicate" asp-route-id="@Model.Id">
-    <button type="submit" class="btn btn-outline-secondary btn-sm" title="Duplicate" data-id="@Model.Id" onclick="duplicateTodoList('@Model.Id')">
+    <button type="submit" class="btn btn-custom-margin btn-outline-secondary btn-sm" title="Duplicate" data-id="@Model.Id" onclick="duplicateTodoList('@Model.Id')">
       <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
         <path d="M8 4V16C8 17.1046 8.89543 18 10 18L18 18C19.1046 18 20 17.1046 20 16V7.24162C20 6.7034 19.7831 6.18789 19.3982 5.81161L16.0829 2.56999C15.7092 2.2046 15.2074 2 14.6847 2H10C8.89543 2 8 2.89543 8 4Z" stroke="currentColor" />
         <path d="M16 18V20C16 21.1046 15.1046 22 14 22H6C4.89543 22 4 21.1046 4 20V9C4 7.89543 4.89543 7 6 7H8" stroke="currentColor" />
@@ -15,7 +15,7 @@
     </button>
   </form>
   <form method="post" enctype="multipart/form-data" asp-controller="ToDoList" asp-action="Delete" asp-route-id="@Model.Id">
-    <button type="submit" class="btn btn-outline-secondary btn-sm" title="Delete" data-toggle="modal" data-target="#confirmDeleteModal" data-id="@Model.Id" onclick="showDeleteConfirmation(event)">
+    <button type="submit" class="btn btn-custom-margin btn-outline-secondary btn-sm" title="Delete" data-toggle="modal" data-target="#confirmDeleteModal" data-id="@Model.Id" onclick="showDeleteConfirmation(event)">
       <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
     </button>
   </form>

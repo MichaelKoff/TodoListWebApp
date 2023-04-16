@@ -2,45 +2,46 @@
 @using TodoList.MVC.Models;
 @model CombinedTodoListViewModel
 
-<div class="container-fluid" style="max-width: 90%;">
-  <div class="row">
-    <div class="d-md-none">
-      <button class="toggle-sidebar" type="button" data-bs-toggle="offcanvas" data-bs-target="#todoListOffcanvas" aria-controls="todoListOffcanvas">&#9776;</button>
-    </div>
-
-    <div class="offcanvas-md offcanvas-start custom-bg col-md-4" tabindex="-1" id="todoListOffcanvas">
-      <div class="offcanvas-header">
-        <h2 class="offcanvas-title">TODO LISTS</h2>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#todoListOffcanvas" aria-label="Close"></button>
+<div class="d-flex">
+  <div class="container-fluid" style="max-width: 90%;">
+    <div class="row">
+      <div class="d-md-none">
+        <button class="toggle-sidebar" type="button" data-bs-toggle="offcanvas" data-bs-target="#todoListOffcanvas" aria-controls="todoListOffcanvas">&#9776;</button>
       </div>
-      <div class="offcanvas-body">
-        <div class="w-100">
-          <h3 class="d-none d-md-block">TODO LISTS</h3>
-          @await Html.PartialAsync("_TodoListContainer", Model.TodoLists)
+
+      <div class="offcanvas-md offcanvas-start custom-bg col-md-4" tabindex="-1" id="todoListOffcanvas">
+        <div class="offcanvas-header">
+          <h2 class="offcanvas-title">TODO LISTS</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#todoListOffcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <div class="w-100">
+            <h3 class="d-none d-md-block">TODO LISTS</h3>
+            @await Html.PartialAsync("_TodoListContainer", Model.TodoLists)
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-12 col-md-8">
-      <div id="task-list-container" class="task-list-container">
-        @if (Model.IsDueToday)
-        {
-          @await Html.PartialAsync("_TasksDueToday", Model.SelectedTodoList)
-        }
-        else
-        {
-          @if (Model.IsListNotFound)
+      <div class="col-12 col-md-8">
+        <div id="task-list-container" class="task-list-container">
+          @if (Model.IsDueToday)
           {
-            @await Html.PartialAsync("_TodoListTasksError")
+            @await Html.PartialAsync("_TasksDueToday", Model.SelectedTodoList)
           }
           else
           {
-            @await Html.PartialAsync("_TodoListTasks", Model.SelectedTodoList)
+            @if (Model.IsListNotFound)
+            {
+              @await Html.PartialAsync("_TodoListTasksError")
+            }
+            else
+            {
+              @await Html.PartialAsync("_TodoListTasks", Model.SelectedTodoList)
+            }
           }
-        }
+        </div>
       </div>
     </div>
   </div>
 </div>
-
 @await Html.PartialAsync("_DeleteConfirmationModal")

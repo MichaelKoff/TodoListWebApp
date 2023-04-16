@@ -61,10 +61,17 @@ main {
     padding-top: 66px;
 }
 
-h2, h3 {
+h1, h2, h3, h4 {
     color: #4fc9b0;
 }
 
+hr{
+    color:#f5f5f5;
+}
+
+p{
+    color:#f5f5f5;
+}
 
 #create-input {
     color: #f5f5f5;
@@ -105,7 +112,7 @@ h2, h3 {
         color: #f5f5f5;
     }
 
-.btn {
+.btn-custom-margin {
     margin: 3.5px;
     margin-left: 5px;
 }
@@ -412,7 +419,7 @@ h2, h3 {
     border-top: 1px solid #3a4147;
 }
 
-.form-control:focus {
+.form-control-custom:focus {
     color: #f5f5f5;
     background-color: #3a4147;
     border-color: #4fc9b0;

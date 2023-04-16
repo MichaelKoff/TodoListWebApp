@@ -9,12 +9,12 @@
       <span asp-validation-for="Title" class="text-danger fs-6" style="margin-left:5px;"></span>
     </div>
     <div class="hstack">
-      <button type="submit" form="edit-todo-list-@Model.Id" class="btn btn-outline-secondary btn-sm">
+      <button type="submit" form="edit-todo-list-@Model.Id" class="btn btn-custom-margin btn-outline-secondary btn-sm">
         <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
           <path d="M6,12 l4,4 l10,-10" />
         </svg>
       </button>
-      <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cancelEditTitle('@Model.Id')">
+      <button type="button" class="btn btn-custom-margin btn-outline-secondary btn-sm" onclick="cancelEditTitle('@Model.Id')">
         <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
           <path d="M6,6 L18,18" />
           <path d="M18,6 L6,18" />
