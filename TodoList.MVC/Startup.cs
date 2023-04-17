@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using SendGrid;
+using SendGrid.Extensions.DependencyInjection;
 using TodoList.Domain;
 using TodoList.Domain.BLL.Interfaces;
 using TodoList.Domain.BLL.Services;
@@ -8,6 +11,7 @@ using TodoList.Domain.DAL.Entities;
 using TodoList.Domain.DAL.Interfaces;
 using TodoList.Domain.DAL.Repositories;
 using TodoList.MVC.Mappers;
+using TodoList.MVC.Services;
 
 namespace TodoList.MVC
 {
@@ -33,7 +37,7 @@ namespace TodoList.MVC
                     Configuration["ConnectionStrings:ApplicationDbContextConnection"]);
             });
 
-            services.AddDefaultIdentity<ApplicationUser>(options 
+            services.AddDefaultIdentity<ApplicationUser>(options
                 => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -41,6 +45,14 @@ namespace TodoList.MVC
             services.AddScoped<IRepository<ToDoListTask>, ToDoListTaskRepository>();
             services.AddScoped<IToDoListService, ToDoListService>();
             services.AddScoped<IToDoListTaskService, ToDoListTaskService>();
+
+            services.Configure<EmailSenderOptions>(Configuration.GetSection("EmailSender"));
+            services.AddSendGrid(options =>
+            {
+                options.ApiKey = Configuration.GetSection("EmailSender:SendGridKey").Value;
+            });
+
+            services.AddTransient<IEmailSender, EmailSender>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
