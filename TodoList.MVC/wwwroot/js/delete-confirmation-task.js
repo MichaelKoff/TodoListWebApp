@@ -2,10 +2,12 @@
     event.preventDefault();
 
     const id = event.currentTarget.getAttribute('data-id');
+    const todoListId = event.currentTarget.getAttribute('data-todolistid');
     const form = event.currentTarget.closest('form');
 
     const confirmDeleteButton = document.getElementById('confirmDeleteButton');
     confirmDeleteButton.setAttribute('data-id', id);
+    confirmDeleteButton.setAttribute('data-todolistid', todoListId);
     confirmDeleteButton.setAttribute('data-token', form.elements['__RequestVerificationToken'].value);
 
     const confirmDeleteModal = $('#confirmDeleteModal');
@@ -21,7 +23,8 @@
 
 function onTaskDeleteButtonClick() {
     const id = this.getAttribute('data-id');
-    const url = `/ToDoList/DeleteTask/${id}`;
+    const todoListId = this.getAttribute('data-todolistid');
+    const url = `/ToDoList/DeleteTask/${id}?todoListId=${todoListId}`;
 
     const token = this.getAttribute('data-token');
 

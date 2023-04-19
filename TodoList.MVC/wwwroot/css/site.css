@@ -400,6 +400,13 @@ p{
         }
 
 
+.delete-task-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
 .form-delete {
     display: inline-block;
     float: right;
