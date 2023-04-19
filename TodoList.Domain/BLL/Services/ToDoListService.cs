@@ -36,6 +36,56 @@ namespace TodoList.Domain.BLL.Services
             await _repository.AddAsync(todoList);
         }
 
+        public Task<ToDoList> GetByIdAsync(int id, string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException(nameof(userId), "User Id cannot be null or empty");
+            }
+
+            return _repository.GetByIdAsync(id, userId);
+        }
+
+        public async Task<List<ToDoList>> GetAllAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException(nameof(userId), "User Id cannot be null or empty");
+            }
+
+            return await _repository.GetAllAsync(userId);
+        }
+
+        public async Task UpdateAsync(ToDoList todoList)
+        {
+            ValidateToDoList(todoList);
+
+            var listToUpdate = await _repository.GetByIdAsync(todoList.Id, todoList.ApplicationUserId);
+
+            if (listToUpdate == null)
+            {
+                throw new ArgumentException($"Todo list with the specified ID \"{todoList.Id}\" and user ID \"{todoList.ApplicationUserId}\" does not exist.");
+            }
+
+            if (listToUpdate.Title.Equals(todoList.Title))
+            {
+                return;
+            }
+
+            var listWithSameTitle = await GetByTitleAsync(todoList.ApplicationUserId, todoList.Title);
+
+            if (listWithSameTitle == null)
+            {
+                listToUpdate.Title = todoList.Title;
+                await _repository.UpdateAsync(listToUpdate);
+                return;
+            }
+
+            listToUpdate.Title = await GetUniqueTitleAsync(todoList);
+
+            await _repository.UpdateAsync(listToUpdate);
+        }
+
         public async Task DeleteAsync(int id, string userId)
         {
             if (string.IsNullOrEmpty(userId))
@@ -91,56 +141,6 @@ namespace TodoList.Domain.BLL.Services
             }
 
             await AddAsync(duplicatedTodoList);
-        }
-
-        public async Task<List<ToDoList>> GetAllAsync(string userId)
-        {
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new ArgumentNullException(nameof(userId), "User Id cannot be null or empty");
-            }
-
-            return await _repository.GetAllAsync(userId);
-        }
-
-        public Task<ToDoList> GetByIdAsync(int id, string userId)
-        {
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new ArgumentNullException(nameof(userId), "User Id cannot be null or empty");
-            }
-
-            return _repository.GetByIdAsync(id, userId);
-        }
-
-        public async Task UpdateAsync(ToDoList todoList)
-        {
-            ValidateToDoList(todoList);
-
-            var listToUpdate = await _repository.GetByIdAsync(todoList.Id, todoList.ApplicationUserId);
-
-            if (listToUpdate == null)
-            {
-                throw new ArgumentException($"Todo list with the specified ID \"{todoList.Id}\" and user ID \"{todoList.ApplicationUserId}\" does not exist.");
-            }
-
-            if (listToUpdate.Title.Equals(todoList.Title))
-            {
-                return;
-            }
-
-            var listWithSameTitle = await GetByTitleAsync(todoList.ApplicationUserId, todoList.Title);
-
-            if (listWithSameTitle == null)
-            {
-                listToUpdate.Title = todoList.Title;
-                await _repository.UpdateAsync(listToUpdate);
-                return;
-            }
-
-            listToUpdate.Title = await GetUniqueTitleAsync(todoList);
-
-            await _repository.UpdateAsync(listToUpdate);
         }
 
         private async Task<ToDoList> GetByTitleAsync(string userId, string title)
