@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TodoList.Domain.BLL.Interfaces;
+using TodoList.Domain.Constants;
 using TodoList.Domain.DAL.Entities;
+using TodoList.Domain.DAL.Enums;
 using TodoList.Domain.DAL.Interfaces;
 
 namespace TodoList.Domain.BLL.Services
@@ -18,61 +20,64 @@ namespace TodoList.Domain.BLL.Services
             _repository = repository;
         }
 
-        public async Task AddAsync(ToDoListTask task)
+        public async Task AddAsync(ToDoListTask todoListTask)
         {
-            if (string.IsNullOrWhiteSpace(task.Title))
-            {
-                throw new ArgumentException("Title cannot be empty or whitespace.", nameof(task.Title));
-            }
+            ValidateTaskOnCreate(todoListTask);
 
-            if (task.Title.Length > 50)
-            {
-                throw new ArgumentException("Title cannot be longer than 50 characters", nameof(task.Title));
-            }
+            todoListTask.CreationDate = DateTime.Now;
+            todoListTask.Status = TodoStatus.NotStarted;
 
-            await _repository.AddAsync(task);
-        }
-
-        public async Task DeleteAsync(int id, string userId)
-        {
-            var taskToDelte = await _repository.GetByIdAsync(id, userId);
-
-            if (taskToDelte == null)
-            {
-                throw new ArgumentException("Task with the specified ID does not exist.", nameof(id));
-            }
-
-            await _repository.DeleteAsync(taskToDelte);
-        }
-
-        public async Task<List<ToDoListTask>> GetAllAsync(string userId)
-        {
-            return await _repository.GetAllAsync(userId);
+            await _repository.AddAsync(todoListTask);
         }
 
         public async Task<ToDoListTask> GetByIdAsync(int id, string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException(nameof(userId), "User Id cannot be null or empty");
+            }
+
             return await _repository.GetByIdAsync(id, userId);
         }
 
-        public async Task UpdateAsync(ToDoListTask task)
+        public async Task<List<ToDoListTask>> GetAllAsync(string userId)
         {
-            if (string.IsNullOrWhiteSpace(task.Title))
+            if (string.IsNullOrEmpty(userId))
             {
-                throw new ArgumentException("Title cannot be empty or whitespace.", nameof(task.Title));
+                throw new ArgumentNullException(nameof(userId), "User Id cannot be null or empty");
             }
 
-            if (task.Title.Length > 50)
+            return await _repository.GetAllAsync(userId);
+        }
+
+        public async Task<List<ToDoListTask>> GetTasksDueTodayAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
             {
-                throw new ArgumentException("Title cannot be longer than 50 characters", nameof(task.Title));
+                throw new ArgumentNullException(nameof(userId), "User Id cannot be null or empty");
             }
 
-            if (task.Description != null && task.Description.Length > 255)
+            var tasks = await _repository.GetAllAsync(userId);
+            var tasksDueToday = tasks.Where(t => t.DueDate.HasValue && t.DueDate.Value.Date == DateTime.Today.Date).ToList();
+            return tasksDueToday;
+        }
+
+        public async Task UpdateAsync(ToDoListTask todoListTask, string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
             {
-                throw new ArgumentException("Description cannot be longer than 255 characters", nameof(task.Description));
+                throw new ArgumentNullException(nameof(userId), "User Id cannot be null or empty");
             }
 
-            var taskToUpdate = await _repository.GetByIdAsync(task.Id, task.ToDoList.ApplicationUserId);
+            ValidateTaskOnUpdate(todoListTask);
+
+            var taskToUpdate = await _repository.GetByIdAsync(todoListTask.Id, userId);
+
+            if (taskToUpdate == null)
+            {
+                throw new ArgumentException($"Task with the specified ID \"{todoListTask.Id}\" does not exist.");
+            }
+
             var taskProperties = typeof(ToDoListTask).GetProperties();
 
             foreach (var property in taskProperties)
@@ -82,20 +87,94 @@ namespace TodoList.Domain.BLL.Services
                     continue;
                 }
 
-                var newValue = property.GetValue(task);
+                var newValue = property.GetValue(todoListTask);
 
-                // Get the value of the property from the existing task
                 var existingValue = property.GetValue(taskToUpdate);
 
-                // Compare the values
                 if (!Equals(newValue, existingValue))
                 {
-                    // Update the value of the property in the existing task
                     property.SetValue(taskToUpdate, newValue);
                 }
             }
 
             await _repository.UpdateAsync(taskToUpdate);
+        }
+
+        public async Task UpdateStatusAsync(int id, string userId, TodoStatus newStatus)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException(nameof(userId), "User Id cannot be null or empty");
+            }
+
+            var taskToUpdate = await _repository.GetByIdAsync(id, userId);
+
+            if (taskToUpdate == null)
+            {
+                throw new ArgumentException($"Task with the specified ID \"{id}\" does not exist.", nameof(id));
+            }
+
+            taskToUpdate.Status = newStatus;
+
+            await _repository.UpdateAsync(taskToUpdate);
+        }
+
+        public async Task DeleteAsync(int id, string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException(nameof(userId), "User Id cannot be null or empty");
+            }
+
+            var taskToDelete = await _repository.GetByIdAsync(id, userId);
+
+            if (taskToDelete == null)
+            {
+                throw new ArgumentException($"Task with the specified ID \"{id}\" does not exist.", nameof(id));
+            }
+
+            await _repository.DeleteAsync(taskToDelete);
+        }
+
+        private static void ValidateTaskOnCreate(ToDoListTask todoListTask)
+        {
+            if (todoListTask.ToDoListId <= 0)
+            {
+                throw new ArgumentException("Unset or invalid Todo list id");
+            }
+
+            if (string.IsNullOrWhiteSpace(todoListTask.Title))
+            {
+                throw new ArgumentException("Title cannot be empty or whitespace.");
+            }
+
+            if (todoListTask.Title.Length > AppConstants.MaxToDoListTaskTitleLength)
+            {
+                throw new ArgumentException($"Title cannot be longer than {AppConstants.MaxToDoListTaskTitleLength} characters");
+            }
+        }
+
+        private static void ValidateTaskOnUpdate(ToDoListTask todoListTask)
+        {
+            if (todoListTask.ToDoListId <= 0)
+            {
+                throw new ArgumentException("Unset or invalid Todo list id");
+            }
+
+            if (string.IsNullOrWhiteSpace(todoListTask.Title))
+            {
+                throw new ArgumentException("Title cannot be empty or whitespace.");
+            }
+
+            if (todoListTask.Title.Length > AppConstants.MaxToDoListTaskTitleLength)
+            {
+                throw new ArgumentException($"Title cannot be longer than {AppConstants.MaxToDoListTaskTitleLength} characters");
+            }
+
+            if (todoListTask.Description != null && todoListTask.Description.Length > AppConstants.MaxToDoListTaskDescriptionLength)
+            {
+                throw new ArgumentException($"Description cannot be longer than {AppConstants.MaxToDoListTaskDescriptionLength} characters");
+            }
         }
     }
 }
