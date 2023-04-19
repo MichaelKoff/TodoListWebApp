@@ -51,9 +51,8 @@
                     history.pushState(stateObj, null, url);
                 }
             },
-            error: function (x) {
-                console.log(x);
-                console.log("Error loading tasks.");
+            error: function (xhr) {
+                window.location.href = xhr.responseText;
             }
         });
     }

@@ -16,9 +16,8 @@
                 let activeButton = document.getElementById(currentTab);
                 selectTab({ currentTarget: activeButton }, currentTab.replace('-button', ''));
             },
-            error: function () {
-                window.location.href = "/Home/Error";
-                console.log("Error updating task.");
+            error: function (xhr) {
+                window.location.href = xhr.responseText;
             }
         });
     });

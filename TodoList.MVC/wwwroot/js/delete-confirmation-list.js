@@ -42,8 +42,8 @@ function onDeleteButtonClick() {
                 lastTodoListLink.focus();
             }
         },
-        error: function () {
-            console.log('Error deleting item.');
+        error: function (xhr) {
+            window.location.href = xhr.responseText;
         }
     });
 }

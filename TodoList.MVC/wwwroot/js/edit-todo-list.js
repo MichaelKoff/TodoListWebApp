@@ -41,9 +41,8 @@ function editTitle(id) {
                 let updatedTitle = $(`a[data-list-id="${id}"]`);
                 updatedTitle.trigger("click");
             },
-            error: function () {
-                window.location.href = "/Home/Error";
-                console.log("Error updating title.");
+            error: function (xhr) {
+                window.location.href = xhr.responseText;
             }
         });
     });

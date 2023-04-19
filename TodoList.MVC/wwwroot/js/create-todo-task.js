@@ -21,8 +21,8 @@
                 form.find('input[name="Title"]').val('');
                 form.find('input[name="Title"]').focus();
             },
-            error: function () {
-                console.log("Error creating todo list.");
+            error: function (xhr) {
+                window.location.href = xhr.responseText;
             }
         });
     });

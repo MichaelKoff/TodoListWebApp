@@ -2,7 +2,6 @@
     $(document).off("submit", "#create-todo-list").on("submit", "#create-todo-list", function (e) {
         e.preventDefault();
         let form = $(this);
-        console.log(form);
         $.ajax({
             url: form.attr("action"),
             method: "POST",
@@ -27,9 +26,8 @@
                     lastTodoListLink.trigger("click");
                 }
             },
-            error: function () {
-                window.location.href = "/Home/Error";
-                console.log("Error creating todo list.");
+            error: function (xhr) {
+                window.location.href = xhr.responseText;
             }
         });
     });

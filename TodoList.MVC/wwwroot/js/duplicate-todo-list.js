@@ -11,9 +11,8 @@
                 let newHtml = $(data).find('#todo-list-items').html();
                 $('#todo-list-items').html(newHtml);
             },
-            error: function () {
-                window.location.href = "/Home/Error";
-                console.log("Error updating title.");
+            error: function (xhr) {
+                window.location.href = xhr.responseText;
             }
         });
     });
