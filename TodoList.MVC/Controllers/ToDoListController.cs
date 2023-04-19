@@ -218,13 +218,13 @@ namespace TodoList.MVC.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
 
-                var todoListViewModel = new ToDoListViewModel();
-                var tasks = await _todoListTaskService.GetAllAsync(user.Id);
-                var tasksDueToday = tasks.Where(t => t.DueDate.HasValue && t.DueDate.Value.Date == DateTime.Today.Date).ToList();
-
+                var tasksDueToday = await _todoListTaskService.GetTasksDueTodayAsync(user.Id);
                 _logger.LogInformation("User {UserId} retrieved his tasks due today", user.Id);
 
-                todoListViewModel.ToDoListTasks = _mapper.Map<List<ToDoListTaskViewModel>>(tasksDueToday);
+                var todoListViewModel = new ToDoListViewModel()
+                {
+                    ToDoListTasks = _mapper.Map<List<ToDoListTaskViewModel>>(tasksDueToday),
+                };
 
                 return PartialView("_TasksDueToday", todoListViewModel);
             }
@@ -243,12 +243,13 @@ namespace TodoList.MVC.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
 
-                var tasks = await _todoListTaskService.GetAllAsync(user.Id);
-                var tasksDueToday = tasks.Where(t => t.DueDate.HasValue && t.DueDate.Value.Date == DateTime.Today.Date).ToList();
+                var tasksDueToday = await _todoListTaskService.GetTasksDueTodayAsync(user.Id);
                 _logger.LogInformation("User {UserId} retrieved his tasks due today", user.Id);
 
-                var todoListViewModel = new ToDoListViewModel();
-                todoListViewModel.ToDoListTasks = _mapper.Map<List<ToDoListTaskViewModel>>(tasksDueToday);
+                var todoListViewModel = new ToDoListViewModel()
+                {
+                    ToDoListTasks = _mapper.Map<List<ToDoListTaskViewModel>>(tasksDueToday),
+                };
 
                 var todoLists = await _todoListService.GetAllAsync(user.Id);
 
@@ -293,13 +294,11 @@ namespace TodoList.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteTask(int id)
+        public async Task<IActionResult> DeleteTask(int id, int todoListId)
         {
             try
             {
                 var user = await _userManager.GetUserAsync(User);
-
-                var taskToDelete = await _todoListTaskService.GetByIdAsync(id, user.Id);
 
                 await _todoListTaskService.DeleteAsync(id, user.Id);
                 _logger.LogInformation("User {UserId} deleted Task with Id {TodoListTaskId}", user.Id, id);
@@ -310,7 +309,7 @@ namespace TodoList.MVC.Controllers
                 }
                 else
                 {
-                    return await TodoListTasks(taskToDelete.ToDoListId);
+                    return await TodoListTasks(todoListId);
                 }
             }
             catch (Exception ex)
@@ -330,10 +329,8 @@ namespace TodoList.MVC.Controllers
                 var user = await _userManager.GetUserAsync(User);
 
                 var taskToUpdate = _mapper.Map<ToDoListTask>(task);
-                var todoList = await _todoListService.GetByIdAsync(taskToUpdate.ToDoListId, user.Id);
-                taskToUpdate.ToDoList = todoList;
 
-                await _todoListTaskService.UpdateAsync(taskToUpdate);
+                await _todoListTaskService.UpdateAsync(taskToUpdate, user.Id);
                 _logger.LogInformation("User {UserId} updated Task with Id {TodoListTaskId}", user.Id, taskToUpdate.Id);
 
                 ModelState.Clear();
@@ -357,17 +354,14 @@ namespace TodoList.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateTaskStatus(int id, TodoStatus newStatus)
+        public async Task<IActionResult> UpdateTaskStatus(int id, int todoListId, TodoStatus newStatus)
         {
             try
             {
                 var user = await _userManager.GetUserAsync(User);
 
-                var taskToUpdate = await _todoListTaskService.GetByIdAsync(id, user.Id);
-                taskToUpdate.Status = newStatus;
-
-                await _todoListTaskService.UpdateAsync(taskToUpdate);
-                _logger.LogInformation("User {UserId} updated status of Task with Id {TodoListTaskId}", user.Id, taskToUpdate.Id);
+                await _todoListTaskService.UpdateStatusAsync(id, user.Id, newStatus);
+                _logger.LogInformation("User {UserId} updated status of Task with Id {TodoListTaskId}", user.Id, id);
 
                 ModelState.Clear();
 
@@ -377,7 +371,7 @@ namespace TodoList.MVC.Controllers
                 }
                 else
                 {
-                    return await TodoListTasks(taskToUpdate.ToDoListId);
+                    return await TodoListTasks(todoListId);
                 }
             }
             catch (Exception ex)
