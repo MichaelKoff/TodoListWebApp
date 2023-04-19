@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using TodoList.Domain.BLL.Interfaces;
@@ -16,13 +17,15 @@ namespace TodoList.MVC.Controllers
     [Authorize]
     public class ToDoListController : Controller
     {
+        private readonly ILogger<ToDoListController> _logger;
         private readonly IMapper _mapper;
         private readonly IToDoListService _todoListService;
         private readonly IToDoListTaskService _todoListTaskService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ToDoListController(IMapper mapper, IToDoListService todoListService, IToDoListTaskService todoListTaskService, UserManager<ApplicationUser> userManager)
+        public ToDoListController(ILogger<ToDoListController> logger, IMapper mapper, IToDoListService todoListService, IToDoListTaskService todoListTaskService, UserManager<ApplicationUser> userManager)
         {
+            _logger = logger;
             _mapper = mapper;
             _todoListService = todoListService;
             _todoListTaskService = todoListTaskService;
@@ -34,20 +37,21 @@ namespace TodoList.MVC.Controllers
             try
             {
                 var user = await _userManager.GetUserAsync(User);
-                var userId = user.Id;
 
-                var todoLists = await _todoListService.GetAllAsync(userId);
+                var todoLists = await _todoListService.GetAllAsync(user.Id);
+                _logger.LogInformation("Retrieved all Todo lists for user {UserId}", user.Id);
+
                 var model = new CombinedTodoListViewModel
                 {
                     TodoLists = _mapper.Map<List<ToDoListViewModel>>(todoLists),
-                    SelectedTodoList = null
                 };
 
                 return View(model);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return View("Error");
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(Index));
+                return RedirectToAction("Error", "Home", new { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
         }
 
@@ -55,55 +59,94 @@ namespace TodoList.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ToDoListViewModel toDoListViewModel)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var userId = user.Id;
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
 
-            var toDoList = _mapper.Map<ToDoList>(toDoListViewModel);
-            toDoList.ApplicationUser = user;
-            toDoList.ApplicationUserId = userId;
+                var toDoList = _mapper.Map<ToDoList>(toDoListViewModel);
+                toDoList.ApplicationUser = user;
+                toDoList.ApplicationUserId = user.Id;
 
-            await _todoListService.AddAsync(toDoList);
+                await _todoListService.AddAsync(toDoList);
+                _logger.LogInformation("User {UserId} created new Todo list with Id {TodoListId}", user.Id, toDoList.Id);
 
-            return await GetTodoListContainerAsync(userId);
+                ModelState.Clear();
+                return await GetTodoListContainerAsync(user.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(Create));
+                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return BadRequest(errorUrl);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Duplicate(int id)
         {
-            var user = await _userManager.GetUserAsync(User);
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
 
-            await _todoListService.DuplicateAsync(id, user.Id);
+                await _todoListService.DuplicateAsync(id, user.Id);
+                _logger.LogInformation("User {UserId} duplicated Todo list with Id {TodoListId}", user.Id, id);
 
-            return await GetTodoListContainerAsync(user.Id);
+                return await GetTodoListContainerAsync(user.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(Duplicate));
+                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return BadRequest(errorUrl);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var userId = user.Id;
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
 
-            await _todoListService.DeleteAsync(id, userId);
+                await _todoListService.DeleteAsync(id, user.Id);
+                _logger.LogInformation("User {UserId} deleted Todo list with Id {TodoListId}", user.Id, id);
 
-            return await GetTodoListContainerAsync(userId);
+                return await GetTodoListContainerAsync(user.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(Delete));
+                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return BadRequest(errorUrl);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(ToDoListViewModel toDoListViewModel)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var userId = user.Id;
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
 
-            var list = _mapper.Map<ToDoList>(toDoListViewModel);
-            list.ApplicationUser = user;
-            list.ApplicationUserId = userId;
+                var list = _mapper.Map<ToDoList>(toDoListViewModel);
+                list.ApplicationUser = user;
+                list.ApplicationUserId = user.Id;
 
-            await _todoListService.UpdateAsync(list);
+                await _todoListService.UpdateAsync(list);
+                _logger.LogInformation("User {UserId} updated Todo list with Id {TodoListId}", user.Id, list.Id);
 
-            return await GetTodoListContainerAsync(userId);
+                ModelState.Clear();
+                return await GetTodoListContainerAsync(user.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(Update));
+                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return BadRequest(errorUrl);
+            }
         }
 
         [HttpPost("[controller]/todolist/{id}")]
@@ -112,20 +155,24 @@ namespace TodoList.MVC.Controllers
             try
             {
                 var user = await _userManager.GetUserAsync(User);
-                var userId = user.Id;
 
-                var todoList = await _todoListService.GetByIdAsync(id, userId);
+                var todoList = await _todoListService.GetByIdAsync(id, user.Id);
 
                 if (todoList == null)
                 {
+                    _logger.LogWarning("User {UserId} attempted to retrieve a non-existing Todo list with Id {TodoListId}", user.Id, id);
                     return PartialView("_TodoListTasksError");
                 }
 
+                _logger.LogInformation("User {UserId} retrieved a Todo list with Id {TodoListId}", user.Id, id);
+
                 return PartialView("_TodoListTasks", _mapper.Map<ToDoListViewModel>(todoList));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return View("Error");
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(TodoListTasks));
+                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return BadRequest(errorUrl);
             }
         }
 
@@ -136,8 +183,17 @@ namespace TodoList.MVC.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
 
-                var selectedTodoList = await _todoListService.GetByIdAsync(id, user.Id);
                 var todoLists = await _todoListService.GetAllAsync(user.Id);
+                var selectedTodoList = todoLists.FirstOrDefault(tl => tl.Id == id);
+
+                if (selectedTodoList == null)
+                {
+                    _logger.LogWarning("User {UserId} attempted to retrieve a non-existing Todo list with Id {TodoListId}", user.Id, id);
+                }
+                else
+                {
+                    _logger.LogInformation("User {UserId} retrieved a Todo list with Id {TodoListId}", user.Id, id);
+                }
 
                 var model = new CombinedTodoListViewModel
                 {
@@ -148,9 +204,10 @@ namespace TodoList.MVC.Controllers
 
                 return View("Index", model);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return View("Error");
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(GetTasks));
+                return RedirectToAction("Error", "Home", new { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
         }
 
@@ -165,13 +222,17 @@ namespace TodoList.MVC.Controllers
                 var tasks = await _todoListTaskService.GetAllAsync(user.Id);
                 var tasksDueToday = tasks.Where(t => t.DueDate.HasValue && t.DueDate.Value.Date == DateTime.Today.Date).ToList();
 
+                _logger.LogInformation("User {UserId} retrieved his tasks due today", user.Id);
+
                 todoListViewModel.ToDoListTasks = _mapper.Map<List<ToDoListTaskViewModel>>(tasksDueToday);
 
                 return PartialView("_TasksDueToday", todoListViewModel);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return View("Error");
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(TasksDueToday));
+                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return BadRequest(errorUrl);
             }
         }
 
@@ -184,6 +245,7 @@ namespace TodoList.MVC.Controllers
 
                 var tasks = await _todoListTaskService.GetAllAsync(user.Id);
                 var tasksDueToday = tasks.Where(t => t.DueDate.HasValue && t.DueDate.Value.Date == DateTime.Today.Date).ToList();
+                _logger.LogInformation("User {UserId} retrieved his tasks due today", user.Id);
 
                 var todoListViewModel = new ToDoListViewModel();
                 todoListViewModel.ToDoListTasks = _mapper.Map<List<ToDoListTaskViewModel>>(tasksDueToday);
@@ -199,9 +261,10 @@ namespace TodoList.MVC.Controllers
 
                 return View("Index", model);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return View("Error");
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(GetTasksDueToday));
+                return RedirectToAction("Error", "Home", new { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
         }
 
@@ -209,30 +272,52 @@ namespace TodoList.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateTask(ToDoListTaskViewModel task)
         {
-            var taskToAdd = _mapper.Map<ToDoListTask>(task);
-            await _todoListTaskService.AddAsync(taskToAdd);
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
 
-            return await TodoListTasks(taskToAdd.ToDoListId);
+                var taskToAdd = _mapper.Map<ToDoListTask>(task);
+                await _todoListTaskService.AddAsync(taskToAdd);
+                _logger.LogInformation("User {UserId} attached new Task with Id {TodoListTaskId} to Todo List {TodoListId}", user.Id, taskToAdd.Id, taskToAdd.ToDoListId);
+
+                ModelState.Clear();
+                return await TodoListTasks(taskToAdd.ToDoListId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(CreateTask));
+                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return BadRequest(errorUrl);
+            }   
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteTask(int id)
         {
-            var user = await _userManager.GetUserAsync(User);
-
-            var task = await _todoListTaskService.GetByIdAsync(id, user.Id);
-            int todoListId = task.ToDoListId;
-
-            await _todoListTaskService.DeleteAsync(id, user.Id);
-
-            if (Request.Headers["Referer"].ToString().Contains("TasksDueToday"))
+            try
             {
-                return await TasksDueToday();
+                var user = await _userManager.GetUserAsync(User);
+
+                var taskToDelete = await _todoListTaskService.GetByIdAsync(id, user.Id);
+
+                await _todoListTaskService.DeleteAsync(id, user.Id);
+                _logger.LogInformation("User {UserId} deleted Task with Id {TodoListTaskId}", user.Id, id);
+
+                if (Request.Headers["Referer"].ToString().Contains("TasksDueToday"))
+                {
+                    return await TasksDueToday();
+                }
+                else
+                {
+                    return await TodoListTasks(taskToDelete.ToDoListId);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return await TodoListTasks(todoListId);
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(DeleteTask));
+                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return BadRequest(errorUrl);
             }
         }
 
@@ -240,23 +325,33 @@ namespace TodoList.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateTask(ToDoListTaskViewModel task)
         {
-            var user = await _userManager.GetUserAsync(User);
-
-            var taskToUpdate = _mapper.Map<ToDoListTask>(task);
-            var todoList = await _todoListService.GetByIdAsync(taskToUpdate.ToDoListId, user.Id);
-            taskToUpdate.ToDoList = todoList;
-
-            await _todoListTaskService.UpdateAsync(taskToUpdate);
-
-            ModelState.Clear();
-
-            if (Request.Headers["Referer"].ToString().Contains("TasksDueToday"))
+            try
             {
-                return await TasksDueToday();
+                var user = await _userManager.GetUserAsync(User);
+
+                var taskToUpdate = _mapper.Map<ToDoListTask>(task);
+                var todoList = await _todoListService.GetByIdAsync(taskToUpdate.ToDoListId, user.Id);
+                taskToUpdate.ToDoList = todoList;
+
+                await _todoListTaskService.UpdateAsync(taskToUpdate);
+                _logger.LogInformation("User {UserId} updated Task with Id {TodoListTaskId}", user.Id, taskToUpdate.Id);
+
+                ModelState.Clear();
+
+                if (Request.Headers["Referer"].ToString().Contains("TasksDueToday"))
+                {
+                    return await TasksDueToday();
+                }
+                else
+                {
+                    return await TodoListTasks(taskToUpdate.ToDoListId);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return await TodoListTasks(taskToUpdate.ToDoListId);
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(UpdateTask));
+                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return BadRequest(errorUrl);
             }
         }
 
@@ -264,22 +359,32 @@ namespace TodoList.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateTaskStatus(int id, TodoStatus newStatus)
         {
-            var user = await _userManager.GetUserAsync(User);
-
-            var taskToUpdate = await _todoListTaskService.GetByIdAsync(id, user.Id);
-            taskToUpdate.Status = newStatus;
-
-            await _todoListTaskService.UpdateAsync(taskToUpdate);
-
-            ModelState.Clear();
-
-            if (Request.Headers["Referer"].ToString().Contains("TasksDueToday"))
+            try
             {
-                return await TasksDueToday();
+                var user = await _userManager.GetUserAsync(User);
+
+                var taskToUpdate = await _todoListTaskService.GetByIdAsync(id, user.Id);
+                taskToUpdate.Status = newStatus;
+
+                await _todoListTaskService.UpdateAsync(taskToUpdate);
+                _logger.LogInformation("User {UserId} updated status of Task with Id {TodoListTaskId}", user.Id, taskToUpdate.Id);
+
+                ModelState.Clear();
+
+                if (Request.Headers["Referer"].ToString().Contains("TasksDueToday"))
+                {
+                    return await TasksDueToday();
+                }
+                else
+                {
+                    return await TodoListTasks(taskToUpdate.ToDoListId);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return await TodoListTasks(taskToUpdate.ToDoListId);
+                _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(UpdateTaskStatus));
+                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return BadRequest(errorUrl);
             }
         }
 
