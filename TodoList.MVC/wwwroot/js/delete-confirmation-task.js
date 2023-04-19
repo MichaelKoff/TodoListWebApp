@@ -17,6 +17,7 @@
         confirmDeleteModal.modal('hide');
     });
 
+    confirmDeleteButton.removeEventListener('click', onDeleteButtonClick);
     confirmDeleteButton.removeEventListener('click', onTaskDeleteButtonClick);
     confirmDeleteButton.addEventListener('click', onTaskDeleteButtonClick);
 }

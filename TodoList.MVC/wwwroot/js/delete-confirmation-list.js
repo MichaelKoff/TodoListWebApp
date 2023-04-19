@@ -16,6 +16,7 @@
     });
 
     confirmDeleteButton.removeEventListener('click', onDeleteButtonClick);
+    confirmDeleteButton.removeEventListener('click', onTaskDeleteButtonClick);
     confirmDeleteButton.addEventListener('click', onDeleteButtonClick);
 }
 
