@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using TodoList.Domain.Constants;
 using TodoList.Domain.DAL.Entities;
 
 namespace TodoList.MVC.ViewModels
@@ -9,7 +10,7 @@ namespace TodoList.MVC.ViewModels
         private string _title;
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(AppConstants.MaxToDoListTitleLength)]
         [RegularExpression(@"^\s*\S+(?:\s+\S+)*\s*$", ErrorMessage = "Title cannot be empty or whitespace.")]
         public string Title 
         {
