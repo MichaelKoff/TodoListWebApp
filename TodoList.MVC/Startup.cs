@@ -63,10 +63,11 @@ namespace TodoList.MVC
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/ToDoList/Error");
                 app.UseHsts();
             }
 
+            
             app.UseStatusCodePages();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -80,7 +81,7 @@ namespace TodoList.MVC
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=ToDoList}/{action=Index}/{id?}");
 
                 endpoints.MapRazorPages();
             });

@@ -55,7 +55,14 @@ namespace TodoList.MVC.Controllers
             }
         }
 
-        [HttpPost]
+        [Route("/Error")]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpPost("/Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ToDoListViewModel toDoListViewModel)
         {
@@ -81,7 +88,7 @@ namespace TodoList.MVC.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("/Duplicate")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Duplicate(int id)
         {
@@ -102,7 +109,7 @@ namespace TodoList.MVC.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("/Delete/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
@@ -123,7 +130,7 @@ namespace TodoList.MVC.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("/Update")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(ToDoListViewModel toDoListViewModel)
         {
@@ -149,7 +156,7 @@ namespace TodoList.MVC.Controllers
             }
         }
 
-        [HttpPost("[controller]/todolist/{id}")]
+        [HttpPost("/todolist/{id}")]
         public async Task<IActionResult> TodoListTasks(int id)
         {
             try
@@ -176,7 +183,7 @@ namespace TodoList.MVC.Controllers
             }
         }
 
-        [HttpGet("[controller]/todolist/{id}")]
+        [HttpGet("/todolist/{id}")]
         public async Task<IActionResult> GetTasks(int id)
         {
             try
@@ -211,7 +218,7 @@ namespace TodoList.MVC.Controllers
             }
         }
 
-        [HttpPost("[controller]/TasksDueToday")]
+        [HttpPost("/TasksDueToday")]
         public async Task<IActionResult> TasksDueToday()
         {
             try
@@ -236,7 +243,7 @@ namespace TodoList.MVC.Controllers
             }
         }
 
-        [HttpGet("[controller]/TasksDueToday")]
+        [HttpGet("/TasksDueToday")]
         public async Task<IActionResult> GetTasksDueToday()
         {
             try
@@ -269,7 +276,7 @@ namespace TodoList.MVC.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("/CreateTask")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateTask(ToDoListTaskViewModel task)
         {
@@ -292,7 +299,7 @@ namespace TodoList.MVC.Controllers
             }   
         }
 
-        [HttpPost]
+        [HttpPost("/DeleteTask/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteTask(int id, int todoListId)
         {
@@ -320,7 +327,7 @@ namespace TodoList.MVC.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("/UpdateTask")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateTask(ToDoListTaskViewModel task)
         {
@@ -352,7 +359,7 @@ namespace TodoList.MVC.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("/UpdateTaskStatus")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateTaskStatus(int id, int todoListId, TodoStatus newStatus)
         {

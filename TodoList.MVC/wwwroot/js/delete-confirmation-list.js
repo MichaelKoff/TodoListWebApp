@@ -22,7 +22,7 @@
 
 function onDeleteButtonClick() {
     const id = this.getAttribute('data-id');
-    const url = `/ToDoList/Delete/${id}`;
+    const url = `/Delete/${id}`;
 
     const token = this.getAttribute('data-token');
 

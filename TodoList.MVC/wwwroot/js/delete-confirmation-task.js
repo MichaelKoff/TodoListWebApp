@@ -25,7 +25,7 @@
 function onTaskDeleteButtonClick() {
     const id = this.getAttribute('data-id');
     const todoListId = this.getAttribute('data-todolistid');
-    const url = `/ToDoList/DeleteTask/${id}?todoListId=${todoListId}`;
+    const url = `/DeleteTask/${id}?todoListId=${todoListId}`;
 
     const token = this.getAttribute('data-token');
 

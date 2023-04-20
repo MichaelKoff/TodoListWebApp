@@ -35,9 +35,9 @@
     function loadTasks(listId, pushState = true) {
         let url;
         if (listId === "TasksDueToday") {
-            url = "/ToDoList/TasksDueToday/";
+            url = "/TasksDueToday/";
         } else {
-            url = `/ToDoList/todolist/${listId}`;
+            url = `/todolist/${listId}`;
         }
 
         $.ajax({
@@ -72,11 +72,11 @@
 
     // Helper function to extract list ID from URL
     function getListIdFromUrl(url) {
-        const match = url.match(/\/ToDoList\/todolist\/(\d+)/);
+        const match = url.match(/\/todolist\/(\d+)/); 
         if (match && match.length > 1) {
             return match[1];
         }
-        else if (url.endsWith("/ToDoList/TasksDueToday/")) {
+        else if (url.endsWith("/TasksDueToday/")) {
             return "TasksDueToday";
         }
 
