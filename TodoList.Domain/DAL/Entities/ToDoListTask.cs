@@ -14,8 +14,8 @@ namespace TodoList.Domain.DAL.Entities
         public string Title { get; set; }
         public string? Description { get; set; }
         public DateTime? DueDate { get; set; }
-        public TodoStatus Status { get; set; } = TodoStatus.NotStarted;
-        public DateTime CreationDate { get; set; } = DateTime.Now;
+        public TodoStatus Status { get; set; }
+        public DateTime CreationDate { get; set; }
         public DateTime? Reminder { get; set; }
     }
 }

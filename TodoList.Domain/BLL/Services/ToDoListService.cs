@@ -36,14 +36,14 @@ namespace TodoList.Domain.BLL.Services
             await _repository.AddAsync(todoList);
         }
 
-        public Task<ToDoList> GetByIdAsync(int id, string userId)
+        public async Task<ToDoList> GetByIdAsync(int id, string userId)
         {
             if (string.IsNullOrEmpty(userId))
             {
                 throw new ArgumentNullException(nameof(userId), "User Id cannot be null or empty");
             }
 
-            return _repository.GetByIdAsync(id, userId);
+            return await _repository.GetByIdAsync(id, userId);
         }
 
         public async Task<List<ToDoList>> GetAllAsync(string userId)
@@ -133,6 +133,7 @@ namespace TodoList.Domain.BLL.Services
                     Description = task.Description,
                     DueDate = task.DueDate,
                     Status = task.Status,
+                    CreationDate = DateTime.Now,
                     Reminder = task.Reminder,
                     ToDoList = duplicatedTodoList,
                 };
