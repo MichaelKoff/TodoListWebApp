@@ -29,7 +29,7 @@ namespace TodoList.Domain.DAL.Repositories
         {
             return await _context.ToDoLists
                 .Include(tl => tl.ToDoListTasks)
-                .Where(tl => tl.ApplicationUserId == userId)
+                .Where(tl => tl.UserId == userId)
                 .ToListAsync();
         }
 
@@ -37,7 +37,7 @@ namespace TodoList.Domain.DAL.Repositories
         {
             return await _context.ToDoLists
                 .Include(tl => tl.ToDoListTasks)
-                .FirstOrDefaultAsync(tl => tl.ApplicationUserId == userId && tl.Id == id);
+                .FirstOrDefaultAsync(tl => tl.UserId == userId && tl.Id == id);
         }
 
         public async Task UpdateAsync(ToDoList todoList)

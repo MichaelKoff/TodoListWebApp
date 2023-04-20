@@ -23,7 +23,7 @@ namespace TodoList.Domain.BLL.Services
         {
             ValidateToDoList(todoList);
 
-            var listWithSameTitle = await GetByTitleAsync(todoList.ApplicationUserId, todoList.Title);
+            var listWithSameTitle = await GetByTitleAsync(todoList.UserId, todoList.Title);
 
             if (listWithSameTitle == null)
             {
@@ -60,11 +60,11 @@ namespace TodoList.Domain.BLL.Services
         {
             ValidateToDoList(todoList);
 
-            var listToUpdate = await _repository.GetByIdAsync(todoList.Id, todoList.ApplicationUserId);
+            var listToUpdate = await _repository.GetByIdAsync(todoList.Id, todoList.UserId);
 
             if (listToUpdate == null)
             {
-                throw new ArgumentException($"Todo list with the specified ID \"{todoList.Id}\" and user ID \"{todoList.ApplicationUserId}\" does not exist.");
+                throw new ArgumentException($"Todo list with the specified ID \"{todoList.Id}\" and user ID \"{todoList.UserId}\" does not exist.");
             }
 
             if (listToUpdate.Title.Equals(todoList.Title))
@@ -72,7 +72,7 @@ namespace TodoList.Domain.BLL.Services
                 return;
             }
 
-            var listWithSameTitle = await GetByTitleAsync(todoList.ApplicationUserId, todoList.Title);
+            var listWithSameTitle = await GetByTitleAsync(todoList.UserId, todoList.Title);
 
             if (listWithSameTitle == null)
             {
@@ -120,8 +120,8 @@ namespace TodoList.Domain.BLL.Services
             var duplicatedTodoList = new ToDoList()
             {
                 Title = existingTodoList.Title,
-                ApplicationUser = existingTodoList.ApplicationUser,
-                ApplicationUserId = existingTodoList.ApplicationUserId,
+                User = existingTodoList.User,
+                UserId = existingTodoList.UserId,
                 ToDoListTasks = new List<ToDoListTask>()
             };
 
@@ -156,7 +156,7 @@ namespace TodoList.Domain.BLL.Services
         {
             int i = 1;
             string title = todoList.Title;
-            var listWithSameTitle = await GetByTitleAsync(todoList.ApplicationUserId, title);
+            var listWithSameTitle = await GetByTitleAsync(todoList.UserId, title);
             var potentialTitleBuilder = new StringBuilder();
 
             while (listWithSameTitle != null)
@@ -170,7 +170,7 @@ namespace TodoList.Domain.BLL.Services
                     potentialTitleBuilder.Clear().Append($"{title} ({i})");
                     potentialTitle = potentialTitleBuilder.ToString();
                 }
-                listWithSameTitle = await GetByTitleAsync(todoList.ApplicationUserId, potentialTitle);
+                listWithSameTitle = await GetByTitleAsync(todoList.UserId, potentialTitle);
                 i++;
             }
 
@@ -179,12 +179,12 @@ namespace TodoList.Domain.BLL.Services
 
         private static void ValidateToDoList(ToDoList todoList)
         {
-            if (todoList.ApplicationUser == null)
+            if (todoList.User == null)
             {
                 throw new ArgumentException("User cannot be null.");
             }
 
-            if (string.IsNullOrEmpty(todoList.ApplicationUserId))
+            if (string.IsNullOrEmpty(todoList.UserId))
             {
                 throw new ArgumentException("User Id cannot be null or empty.");
             }

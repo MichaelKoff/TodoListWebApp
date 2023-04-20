@@ -37,7 +37,7 @@ namespace TodoList.MVC
                     Configuration["ConnectionStrings:ApplicationDbContextConnection"]);
             });
 
-            services.AddDefaultIdentity<ApplicationUser>(options
+            services.AddDefaultIdentity<User>(options
                 => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 

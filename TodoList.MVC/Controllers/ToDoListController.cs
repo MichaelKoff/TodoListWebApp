@@ -21,9 +21,9 @@ namespace TodoList.MVC.Controllers
         private readonly IMapper _mapper;
         private readonly IToDoListService _todoListService;
         private readonly IToDoListTaskService _todoListTaskService;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
-        public ToDoListController(ILogger<ToDoListController> logger, IMapper mapper, IToDoListService todoListService, IToDoListTaskService todoListTaskService, UserManager<ApplicationUser> userManager)
+        public ToDoListController(ILogger<ToDoListController> logger, IMapper mapper, IToDoListService todoListService, IToDoListTaskService todoListTaskService, UserManager<User> userManager)
         {
             _logger = logger;
             _mapper = mapper;
@@ -71,8 +71,8 @@ namespace TodoList.MVC.Controllers
                 var user = await _userManager.GetUserAsync(User);
 
                 var toDoList = _mapper.Map<ToDoList>(toDoListViewModel);
-                toDoList.ApplicationUser = user;
-                toDoList.ApplicationUserId = user.Id;
+                toDoList.User = user;
+                toDoList.UserId = user.Id;
 
                 await _todoListService.AddAsync(toDoList);
                 _logger.LogInformation("User {UserId} created new Todo list with Id {TodoListId}", user.Id, toDoList.Id);
@@ -139,8 +139,8 @@ namespace TodoList.MVC.Controllers
                 var user = await _userManager.GetUserAsync(User);
 
                 var list = _mapper.Map<ToDoList>(toDoListViewModel);
-                list.ApplicationUser = user;
-                list.ApplicationUserId = user.Id;
+                list.User = user;
+                list.UserId = user.Id;
 
                 await _todoListService.UpdateAsync(list);
                 _logger.LogInformation("User {UserId} updated Todo list with Id {TodoListId}", user.Id, list.Id);

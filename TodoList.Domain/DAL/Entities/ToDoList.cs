@@ -12,7 +12,7 @@ namespace TodoList.Domain.DAL.Entities
 
         public ICollection<ToDoListTask> ToDoListTasks { get; set; }
 
-        public string ApplicationUserId { get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
     }
 }

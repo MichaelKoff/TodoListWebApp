@@ -6,7 +6,7 @@ using TodoList.Domain.DAL.Entities;
 
 namespace TodoList.Domain;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+public class ApplicationDbContext : IdentityDbContext<User>
 {
     public DbSet<ToDoList> ToDoLists { get; set; }
 
@@ -21,10 +21,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<ApplicationUser>()
+        builder.Entity<User>()
         .HasMany(u => u.ToDoLists)
-        .WithOne(l => l.ApplicationUser)
-        .HasForeignKey(l => l.ApplicationUserId);
+        .WithOne(l => l.User)
+        .HasForeignKey(l => l.UserId);
 
         builder.Entity<ToDoList>()
             .HasMany(l => l.ToDoListTasks)
