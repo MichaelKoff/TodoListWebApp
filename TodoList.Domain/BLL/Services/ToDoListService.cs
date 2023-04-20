@@ -154,18 +154,27 @@ namespace TodoList.Domain.BLL.Services
 
         private async Task<string> GetUniqueTitleAsync(ToDoList todoList)
         {
-            var i = 1;
-            var title = todoList.Title;
+            int i = 1;
+            string title = todoList.Title;
             var listWithSameTitle = await GetByTitleAsync(todoList.ApplicationUserId, title);
+            var potentialTitleBuilder = new StringBuilder();
 
             while (listWithSameTitle != null)
             {
-                title = $"{todoList.Title} ({i})";
-                listWithSameTitle = await GetByTitleAsync(todoList.ApplicationUserId, title);
+                potentialTitleBuilder.Clear().Append($"{title} ({i})");
+                string potentialTitle = potentialTitleBuilder.ToString();
+
+                if (potentialTitle.Length > AppConstants.MaxToDoListTitleLength)
+                {
+                    title = title[..(AppConstants.MaxToDoListTitleLength - $" ({i})".Length)];
+                    potentialTitleBuilder.Clear().Append($"{title} ({i})");
+                    potentialTitle = potentialTitleBuilder.ToString();
+                }
+                listWithSameTitle = await GetByTitleAsync(todoList.ApplicationUserId, potentialTitle);
                 i++;
             }
 
-            return title;
+            return potentialTitleBuilder.ToString();
         }
 
         private static void ValidateToDoList(ToDoList todoList)
