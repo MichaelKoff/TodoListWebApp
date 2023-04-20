@@ -51,7 +51,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(Index));
-                return RedirectToAction("Error", "Home", new { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return RedirectToAction("Error", new { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
         }
 
@@ -83,7 +83,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(Create));
-                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                var errorUrl = Url.Action("Error", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
                 return BadRequest(errorUrl);
             }
         }
@@ -104,7 +104,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(Duplicate));
-                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                var errorUrl = Url.Action("Error", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
                 return BadRequest(errorUrl);
             }
         }
@@ -125,7 +125,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(Delete));
-                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                var errorUrl = Url.Action("Error", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
                 return BadRequest(errorUrl);
             }
         }
@@ -151,7 +151,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(Update));
-                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                var errorUrl = Url.Action("Error", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
                 return BadRequest(errorUrl);
             }
         }
@@ -181,7 +181,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(TodoListTasks));
-                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                var errorUrl = Url.Action("Error", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
                 return BadRequest(errorUrl);
             }
         }
@@ -217,7 +217,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(GetTasks));
-                return RedirectToAction("Error", "Home", new { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return RedirectToAction("Error", new { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
         }
 
@@ -242,7 +242,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(TasksDueToday));
-                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                var errorUrl = Url.Action("Error", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
                 return BadRequest(errorUrl);
             }
         }
@@ -276,7 +276,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(GetTasksDueToday));
-                return RedirectToAction("Error", "Home", new { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return RedirectToAction("Error", new { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
         }
 
@@ -298,7 +298,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(CreateTask));
-                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                var errorUrl = Url.Action("Error", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
                 return BadRequest(errorUrl);
             }   
         }
@@ -326,7 +326,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(DeleteTask));
-                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                var errorUrl = Url.Action("Error", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
                 return BadRequest(errorUrl);
             }
         }
@@ -358,7 +358,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(UpdateTask));
-                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                var errorUrl = Url.Action("Error", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
                 return BadRequest(errorUrl);
             }
         }
@@ -388,7 +388,7 @@ namespace TodoList.MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the {ActionName} action", nameof(UpdateTaskStatus));
-                var errorUrl = Url.Action("Error", "Home", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                var errorUrl = Url.Action("Error", new { requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
                 return BadRequest(errorUrl);
             }
         }
