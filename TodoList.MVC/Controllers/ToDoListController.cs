@@ -173,7 +173,10 @@ namespace TodoList.MVC.Controllers
 
                 _logger.LogInformation("User {UserId} retrieved a Todo list with Id {TodoListId}", user.Id, id);
 
-                return PartialView("_TodoListTasks", _mapper.Map<ToDoListViewModel>(todoList));
+                var viewModel = _mapper.Map<ToDoListViewModel>(todoList);
+                viewModel.ToDoListTasks.Sort((t1, t2) => t1.CreationDate.CompareTo(t2.CreationDate));
+
+                return PartialView("_TodoListTasks", viewModel);
             }
             catch (Exception ex)
             {
@@ -228,6 +231,7 @@ namespace TodoList.MVC.Controllers
                 var tasksDueToday = await _todoListTaskService.GetTasksDueTodayAsync(user.Id);
                 _logger.LogInformation("User {UserId} retrieved his tasks due today", user.Id);
 
+                tasksDueToday.Sort((t1, t2) => t1.CreationDate.CompareTo(t2.CreationDate));
                 var todoListViewModel = new ToDoListViewModel()
                 {
                     ToDoListTasks = _mapper.Map<List<ToDoListTaskViewModel>>(tasksDueToday),
