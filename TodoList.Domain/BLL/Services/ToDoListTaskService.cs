@@ -156,11 +156,6 @@ namespace TodoList.Domain.BLL.Services
 
         private static void ValidateTaskOnUpdate(ToDoListTask todoListTask)
         {
-            if (todoListTask.ToDoListId <= 0)
-            {
-                throw new ArgumentException("Unset or invalid Todo list id");
-            }
-
             if (string.IsNullOrWhiteSpace(todoListTask.Title))
             {
                 throw new ArgumentException("Title cannot be empty or whitespace.");
