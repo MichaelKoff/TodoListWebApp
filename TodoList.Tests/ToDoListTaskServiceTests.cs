@@ -11,6 +11,7 @@ using TodoList.Domain;
 using TodoList.Domain.DAL.Enums;
 using TodoList.Domain.DAL.Interfaces;
 using FluentAssertions;
+using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using TodoList.Domain.Constants;
 using Microsoft.VisualBasic;

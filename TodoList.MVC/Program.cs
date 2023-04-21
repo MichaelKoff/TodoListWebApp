@@ -1,8 +1,13 @@
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Formatting.Compact;
+using System;
 using System.Configuration;
+using System.IO;
 
 namespace TodoList.MVC
 {

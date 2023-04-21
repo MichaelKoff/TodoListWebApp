@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-namespace TodoList.Domain.DAL.Entities;
-
-public class User : IdentityUser
+namespace TodoList.Domain.DAL.Entities
 {
-    public ICollection<ToDoList> ToDoLists { get; set; }
-}
+    public class User : IdentityUser
+    {
+        public ICollection<ToDoList> ToDoLists { get; set; }
+    }
 
+}

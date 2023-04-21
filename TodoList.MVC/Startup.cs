@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SendGrid;
 using SendGrid.Extensions.DependencyInjection;
 using TodoList.Domain;
