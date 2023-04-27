@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using TodoList.Domain.BLL.Interfaces;
 using TodoList.Domain.DAL.Entities;
 using TodoList.Domain.DAL.Enums;
-using TodoList.MVC.Models;
 using TodoList.MVC.ViewModels;
 
 namespace TodoList.MVC.Controllers

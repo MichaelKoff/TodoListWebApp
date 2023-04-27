@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using TodoList.Domain.DAL.Entities;
-using TodoList.MVC.ViewModels;
 
-namespace TodoList.MVC.Models
+namespace TodoList.MVC.ViewModels
 {
     public class CombinedTodoListViewModel
     {
